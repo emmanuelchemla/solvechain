@@ -19,6 +19,7 @@ const versionsEl = document.getElementById('versions');
 const feedbackForm = document.getElementById('feedback-form');
 const feedbackInput = document.getElementById('feedback');
 
+const logoutBtn = document.getElementById('logout-btn');
 const errorEl = document.getElementById('error');
 
 function showError(message) {
@@ -95,6 +96,10 @@ startForm.addEventListener('submit', async (event) => {
     answerInput.value = '';
     renderVersions();
   } catch (error) {
+    if (error.message === 'Authentication required') {
+      window.location.href = '/#auth';
+      return;
+    }
     showError(error.message);
   }
 });
@@ -180,6 +185,16 @@ feedbackForm.addEventListener('submit', async (event) => {
     feedbackInput.value = '';
     state.versions.unshift(version);
     renderVersions();
+  } catch (error) {
+    showError(error.message);
+  }
+});
+
+logoutBtn.addEventListener('click', async () => {
+  clearError();
+  try {
+    await postJSON('/api/auth/logout', {});
+    window.location.href = '/#auth';
   } catch (error) {
     showError(error.message);
   }

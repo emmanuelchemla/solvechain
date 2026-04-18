@@ -3,50 +3,153 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FastAPI Webapp Consultant</title>
-  <link rel="stylesheet" href="/static/styles.css" />
+  <title>ForgeFlow | Build Internal Apps Fast</title>
+  <link rel="stylesheet" href="/static/site.css" />
 </head>
 <body>
-  <main class="page">
-    <header class="hero">
-      <h1>FastAPI Webapp Consultant</h1>
-      <p>Describe a pain point, answer discovery questions, then generate and iterate FastAPI webapp versions.</p>
-    </header>
+  <header class="topbar">
+    <a class="brand" href="#home">ForgeFlow</a>
+    <nav>
+      <a href="#pitch">Pitch</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#process">Process</a>
+      <a href="#packages">Packages</a>
+      <a href="#about">Who We Are</a>
+      <a href="#auth">Try / Register</a>
+    </nav>
+  </header>
 
-    <section class="panel">
-      <h2>1. Pain Point</h2>
-      <form id="start-form" class="stack">
-        <label for="pain-point">What problem are we solving?</label>
-        <textarea id="pain-point" name="pain-point" rows="4" placeholder="Example: Our support tickets live in email, so we miss SLAs and duplicate work."></textarea>
-        <button type="submit">Start Discovery</button>
-      </form>
-      <p id="session-note" class="muted"></p>
+  <main id="home">
+    <section class="hero" id="pitch">
+      <div>
+        <p class="chip">From pain point to production app in one workflow</p>
+        <h1>We ship FastAPI webapps from your business reality, not generic templates.</h1>
+        <p class="lede">ForgeFlow interviews your team, extracts the real operational bottlenecks, and proposes versioned webapps you can iterate in a live feedback loop.</p>
+        <div class="cta-row">
+          <a class="btn" href="#auth">Start Building</a>
+          <a class="btn btn-ghost" href="#process">See Process</a>
+        </div>
+      </div>
+      <aside class="hero-card">
+        <h2>What you get</h2>
+        <ul>
+          <li>Structured discovery with follow-up questions</li>
+          <li>Generated FastAPI app scaffolds</li>
+          <li>Version-by-version feedback upgrades</li>
+          <li>Downloadable project ZIPs per iteration</li>
+        </ul>
+      </aside>
     </section>
 
-    <section class="panel" id="discovery-panel" hidden>
-      <h2>2. Follow-up Questions</h2>
-      <p id="question"></p>
-      <form id="answer-form" class="stack">
-        <textarea id="answer" rows="4" placeholder="Your answer"></textarea>
-        <button type="submit">Submit Answer</button>
-      </form>
-      <p id="remaining" class="muted"></p>
-      <button id="generate-btn" type="button" hidden>Generate FastAPI App v1</button>
+    <section id="testimonials" class="section">
+      <h2>Teams using ForgeFlow</h2>
+      <div class="grid-3">
+        <article class="card quote">
+          <p>"We moved from spreadsheet ticket triage to a usable internal app in one afternoon."</p>
+          <strong>Head of Ops, SaaS Startup</strong>
+        </article>
+        <article class="card quote">
+          <p>"The follow-up questions surfaced edge cases we usually discover too late."</p>
+          <strong>Product Lead, Marketplace Team</strong>
+        </article>
+        <article class="card quote">
+          <p>"Versioned feedback made stakeholder review concrete and fast."</p>
+          <strong>CTO, Services Company</strong>
+        </article>
+      </div>
     </section>
 
-    <section class="panel" id="output-panel" hidden>
-      <h2>3. Generated Versions</h2>
-      <div id="versions"></div>
-      <form id="feedback-form" class="stack">
-        <label for="feedback">Feedback for next version</label>
-        <textarea id="feedback" rows="3" placeholder="Example: Add approvals, better mobile UX, and CSV exports."></textarea>
-        <button type="submit">Generate Next Version</button>
-      </form>
+    <section id="process" class="section split">
+      <div>
+        <h2>Process</h2>
+        <ol>
+          <li><strong>Diagnose:</strong> Describe your pain point.</li>
+          <li><strong>Clarify:</strong> Answer targeted follow-up questions.</li>
+          <li><strong>Generate:</strong> Get FastAPI webapp version 1.</li>
+          <li><strong>Refine:</strong> Provide feedback and generate next versions.</li>
+          <li><strong>Deploy:</strong> Download and run your selected version.</li>
+        </ol>
+      </div>
+      <div class="card process-panel">
+        <h3>Outcome</h3>
+        <p>A concrete app your team can run immediately, with a clear paper trail of decisions between each version.</p>
+      </div>
     </section>
 
-    <p id="error" class="error" hidden></p>
+    <section id="packages" class="section">
+      <h2>Packages</h2>
+      <div class="grid-3">
+        <article class="card package">
+          <h3>Starter</h3>
+          <p class="price">$99 / month</p>
+          <ul>
+            <li>1 active workspace</li>
+            <li>Core discovery + generation flow</li>
+            <li>Version history</li>
+          </ul>
+        </article>
+        <article class="card package featured">
+          <h3>Growth</h3>
+          <p class="price">$299 / month</p>
+          <ul>
+            <li>5 active workspaces</li>
+            <li>Priority generation queue</li>
+            <li>Team collaboration notes</li>
+          </ul>
+        </article>
+        <article class="card package">
+          <h3>Scale</h3>
+          <p class="price">Custom</p>
+          <ul>
+            <li>Unlimited workspaces</li>
+            <li>Custom integration hooks</li>
+            <li>Dedicated onboarding</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="about" class="section split">
+      <div>
+        <h2>Who We Are</h2>
+        <p>We are a product and platform team focused on one problem: internal software takes too long to build and validate. ForgeFlow compresses that loop.</p>
+        <p>Our stack is intentionally pragmatic: FastAPI, clear workflows, and versioned outcomes you can inspect and run.</p>
+      </div>
+      <div class="card">
+        <h3>Why teams hire us</h3>
+        <ul>
+          <li>Less ambiguity before building</li>
+          <li>Faster stakeholder alignment</li>
+          <li>Shippable code, not slideware</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="auth" class="section auth-section">
+      <h2>Try ForgeFlow</h2>
+      <p id="auth-state" class="muted"></p>
+      <div class="grid-2">
+        <form id="register-form" class="card stack">
+          <h3>Create account</h3>
+          <input id="register-name" type="text" placeholder="Name" required />
+          <input id="register-email" type="email" placeholder="Email" required />
+          <input id="register-password" type="password" placeholder="Password (min 8 chars)" required minlength="8" />
+          <button type="submit" class="btn">Register & Access Consultant</button>
+        </form>
+
+        <form id="login-form" class="card stack">
+          <h3>Already registered?</h3>
+          <input id="login-email" type="email" placeholder="Email" required />
+          <input id="login-password" type="password" placeholder="Password" required minlength="8" />
+          <button type="submit" class="btn">Login</button>
+          <button id="logout-btn" type="button" class="btn btn-ghost" hidden>Logout</button>
+        </form>
+      </div>
+      <p id="auth-error" class="error" hidden></p>
+      <a id="consultant-link" class="btn" href="/consultant" hidden>Go To Consultant App</a>
+    </section>
   </main>
 
-  <script src="/static/app.js"></script>
+  <script src="/static/site.js"></script>
 </body>
 </html>

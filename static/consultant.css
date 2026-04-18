@@ -33,14 +33,35 @@ body {
   margin-bottom: 1rem;
 }
 
-.hero h1 {
+.eyebrow {
   margin: 0;
+  color: var(--brand);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+.hero h1 {
+  margin: .25rem 0;
   font-size: clamp(1.7rem, 3vw, 2.4rem);
 }
 
 .hero p {
-  margin-top: .5rem;
+  margin-top: .4rem;
   color: var(--muted);
+}
+
+.hero-actions {
+  display: flex;
+  gap: .8rem;
+  align-items: center;
+}
+
+.text-link {
+  color: var(--brand);
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .panel {

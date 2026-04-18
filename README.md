@@ -1,20 +1,27 @@
-# FastAPI Webapp Consultant
+# ForgeFlow - FastAPI Webapp Consultant
 
-A FastAPI app that helps users create new FastAPI webapps through a guided workflow:
+This project includes:
 
-1. User describes a pain point.
-2. Consultant app asks follow-up questions.
-3. System generates a FastAPI webapp scaffold (version 1).
-4. User gives feedback.
-5. System generates a new FastAPI version.
-
-Each generated version is downloadable as a ZIP project.
+1. A startup-style marketing website (`/`) with pitch, testimonials, process, packages, and company/about sections.
+2. Register/Login experience for access control.
+3. A protected consultant app (`/consultant`) that helps users create FastAPI webapps through:
+   - pain-point input
+   - follow-up discovery questions
+   - generated app version 1
+   - iterative feedback loop to generate new versions
+4. ZIP download for each generated FastAPI version.
 
 ## Run
 
 ```bash
+source ~/.venvs/autoapp/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-Open: http://127.0.0.1:8000
+Open `http://127.0.0.1:8000`.
+
+## Notes
+
+- Auth is intentionally lightweight and in-memory (for demo use).
+- Generated app artifacts are also in-memory per running process.

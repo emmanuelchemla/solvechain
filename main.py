@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import io
 import re
 import textwrap
@@ -9,16 +10,16 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 from starlette.requests import Request
 
 
-app = FastAPI(title="Webapp Consultant", version="1.0.0")
+app = FastAPI(title="Webapp Consultant", version="1.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,6 +31,8 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+AUTH_COOKIE_NAME = "wc_auth"
 
 
 class StartSessionRequest(BaseModel):
@@ -50,9 +53,15 @@ class FeedbackRequest(BaseModel):
     feedback: str = Field(min_length=3, max_length=3000)
 
 
-class DownloadRequest(BaseModel):
-    session_id: str
-    version: int
+class RegisterRequest(BaseModel):
+    name: str = Field(min_length=2, max_length=80)
+    email: str = Field(min_length=5, max_length=254)
+    password: str = Field(min_length=8, max_length=128)
+
+
+class LoginRequest(BaseModel):
+    email: str = Field(min_length=5, max_length=254)
+    password: str = Field(min_length=8, max_length=128)
 
 
 @dataclass
@@ -67,6 +76,7 @@ class GeneratedVersion:
 @dataclass
 class SessionState:
     session_id: str
+    user_email: str
     pain_point: str
     questions: list[str]
     answers: list[str] = field(default_factory=list)
@@ -74,6 +84,8 @@ class SessionState:
 
 
 SESSIONS: dict[str, SessionState] = {}
+USERS: dict[str, dict[str, str]] = {}
+AUTH_SESSIONS: dict[str, str] = {}
 
 
 def _now_iso() -> str:
@@ -88,6 +100,46 @@ def _slugify(text: str) -> str:
 
 def _title_case_slug(slug: str) -> str:
     return " ".join(piece.capitalize() for piece in slug.split("-") if piece)
+
+
+def _is_valid_email(email: str) -> bool:
+    return bool(re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email))
+
+
+def _hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+
+def _set_auth_cookie(response: Response, token: str) -> None:
+    response.set_cookie(
+        key=AUTH_COOKIE_NAME,
+        value=token,
+        httponly=True,
+        secure=False,
+        samesite="lax",
+        max_age=60 * 60 * 24 * 14,
+    )
+
+
+def _clear_auth_cookie(response: Response) -> None:
+    response.delete_cookie(AUTH_COOKIE_NAME)
+
+
+def _current_user(request: Request) -> dict[str, str] | None:
+    token = request.cookies.get(AUTH_COOKIE_NAME)
+    if not token:
+        return None
+    email = AUTH_SESSIONS.get(token)
+    if not email:
+        return None
+    return USERS.get(email)
+
+
+def _require_user(request: Request) -> dict[str, str]:
+    user = _current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    return user
 
 
 def _extract_focus(pain_point: str, answers: list[str]) -> str:
@@ -407,14 +459,87 @@ def _pack_version_as_zip(version_obj: GeneratedVersion) -> bytes:
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse("index.html", {"request": request})
+    user = _current_user(request)
+    return templates.TemplateResponse("index.html", {"request": request, "user": user})
+
+
+@app.get("/consultant", response_class=HTMLResponse)
+async def consultant(request: Request) -> HTMLResponse:
+    user = _current_user(request)
+    if not user:
+        return RedirectResponse(url="/#auth", status_code=303)
+    return templates.TemplateResponse("consultant.html", {"request": request, "user": user})
+
+
+@app.post("/api/auth/register")
+async def register(payload: RegisterRequest, response: Response) -> dict[str, Any]:
+    email = payload.email.lower().strip()
+    if not _is_valid_email(email):
+        raise HTTPException(status_code=422, detail="Invalid email")
+    if email in USERS:
+        raise HTTPException(status_code=409, detail="Account already exists")
+
+    USERS[email] = {
+        "name": payload.name.strip(),
+        "email": email,
+        "password_hash": _hash_password(payload.password),
+        "created_at": _now_iso(),
+    }
+    token = str(uuid.uuid4())
+    AUTH_SESSIONS[token] = email
+    _set_auth_cookie(response, token)
+
+    return {"ok": True, "name": USERS[email]["name"], "email": email}
+
+
+@app.post("/api/auth/login")
+async def login(payload: LoginRequest, response: Response) -> dict[str, Any]:
+    email = payload.email.lower().strip()
+    if not _is_valid_email(email):
+        raise HTTPException(status_code=422, detail="Invalid email")
+    user = USERS.get(email)
+    if not user or user["password_hash"] != _hash_password(payload.password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    token = str(uuid.uuid4())
+    AUTH_SESSIONS[token] = email
+    _set_auth_cookie(response, token)
+
+    return {"ok": True, "name": user["name"], "email": user["email"]}
+
+
+@app.post("/api/auth/logout")
+async def logout(request: Request, response: Response) -> dict[str, bool]:
+    token = request.cookies.get(AUTH_COOKIE_NAME)
+    if token:
+        AUTH_SESSIONS.pop(token, None)
+    _clear_auth_cookie(response)
+    return {"ok": True}
+
+
+@app.get("/api/auth/me")
+async def auth_me(request: Request) -> dict[str, Any]:
+    user = _current_user(request)
+    if not user:
+        return {"authenticated": False}
+    return {
+        "authenticated": True,
+        "name": user["name"],
+        "email": user["email"],
+    }
 
 
 @app.post("/api/session/start")
-async def start_session(payload: StartSessionRequest) -> dict[str, Any]:
+async def start_session(payload: StartSessionRequest, request: Request) -> dict[str, Any]:
+    user = _require_user(request)
     session_id = str(uuid.uuid4())
     questions = _follow_up_questions(payload.pain_point)
-    state = SessionState(session_id=session_id, pain_point=payload.pain_point, questions=questions)
+    state = SessionState(
+        session_id=session_id,
+        user_email=user["email"],
+        pain_point=payload.pain_point,
+        questions=questions,
+    )
     SESSIONS[session_id] = state
 
     return {
@@ -426,9 +551,10 @@ async def start_session(payload: StartSessionRequest) -> dict[str, Any]:
 
 
 @app.post("/api/session/answer")
-async def answer_question(payload: SessionAnswerRequest) -> dict[str, Any]:
+async def answer_question(payload: SessionAnswerRequest, request: Request) -> dict[str, Any]:
+    user = _require_user(request)
     state = SESSIONS.get(payload.session_id)
-    if not state:
+    if not state or state.user_email != user["email"]:
         raise HTTPException(status_code=404, detail="Session not found")
 
     if len(state.answers) >= len(state.questions):
@@ -455,9 +581,10 @@ async def answer_question(payload: SessionAnswerRequest) -> dict[str, Any]:
 
 
 @app.post("/api/generate")
-async def generate_version(payload: GenerateRequest) -> dict[str, Any]:
+async def generate_version(payload: GenerateRequest, request: Request) -> dict[str, Any]:
+    user = _require_user(request)
     state = SESSIONS.get(payload.session_id)
-    if not state:
+    if not state or state.user_email != user["email"]:
         raise HTTPException(status_code=404, detail="Session not found")
 
     if len(state.answers) < len(state.questions):
@@ -475,9 +602,10 @@ async def generate_version(payload: GenerateRequest) -> dict[str, Any]:
 
 
 @app.post("/api/feedback")
-async def feedback_loop(payload: FeedbackRequest) -> dict[str, Any]:
+async def feedback_loop(payload: FeedbackRequest, request: Request) -> dict[str, Any]:
+    user = _require_user(request)
     state = SESSIONS.get(payload.session_id)
-    if not state:
+    if not state or state.user_email != user["email"]:
         raise HTTPException(status_code=404, detail="Session not found")
 
     if not state.versions:
@@ -495,9 +623,10 @@ async def feedback_loop(payload: FeedbackRequest) -> dict[str, Any]:
 
 
 @app.get("/api/session/{session_id}")
-async def session_status(session_id: str) -> dict[str, Any]:
+async def session_status(session_id: str, request: Request) -> dict[str, Any]:
+    user = _require_user(request)
     state = SESSIONS.get(session_id)
-    if not state:
+    if not state or state.user_email != user["email"]:
         raise HTTPException(status_code=404, detail="Session not found")
 
     return {
@@ -518,9 +647,10 @@ async def session_status(session_id: str) -> dict[str, Any]:
 
 
 @app.get("/api/version/download")
-async def download_version(session_id: str, version: int) -> StreamingResponse:
+async def download_version(session_id: str, version: int, request: Request) -> StreamingResponse:
+    user = _require_user(request)
     state = SESSIONS.get(session_id)
-    if not state:
+    if not state or state.user_email != user["email"]:
         raise HTTPException(status_code=404, detail="Session not found")
 
     match = next((item for item in state.versions if item.version == version), None)

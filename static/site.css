@@ -1,0 +1,242 @@
+:root {
+  --bg: #f6f8fc;
+  --text: #101828;
+  --muted: #475467;
+  --line: #d0d5dd;
+  --brand: #0b4f6c;
+  --brand-2: #06a77d;
+  --surface: #ffffff;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(1000px 500px at 0% 0%, rgba(11, 79, 108, 0.18), transparent 60%),
+    radial-gradient(900px 450px at 100% 20%, rgba(6, 167, 125, 0.2), transparent 55%),
+    var(--bg);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .9rem 1rem;
+  background: rgba(246, 248, 252, 0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(208, 213, 221, 0.7);
+}
+
+.brand {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+nav {
+  display: flex;
+  gap: .85rem;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: .92rem;
+}
+
+main {
+  width: min(1120px, 100% - 2rem);
+  margin: 0 auto;
+  padding-bottom: 4rem;
+}
+
+.hero {
+  padding: 4rem 0 2.5rem;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1.6fr 1fr;
+  align-items: start;
+}
+
+.chip {
+  margin: 0 0 .75rem;
+  color: var(--brand);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .76rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.05;
+}
+
+.lede {
+  margin: 1rem 0 1.2rem;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 60ch;
+}
+
+.cta-row {
+  display: flex;
+  gap: .7rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: .7rem 1rem;
+  color: white;
+  background: linear-gradient(130deg, var(--brand), var(--brand-2));
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--brand);
+  border-color: var(--brand);
+}
+
+.hero-card,
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 12px 30px rgba(16, 24, 40, 0.07);
+}
+
+.section {
+  padding: 2rem 0;
+}
+
+h2 {
+  margin: 0 0 .85rem;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .8rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .8rem;
+}
+
+.quote p {
+  margin-top: 0;
+  color: var(--muted);
+}
+
+.quote strong {
+  font-size: .9rem;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: .8rem;
+  align-items: start;
+}
+
+ol {
+  margin: .3rem 0 0;
+  padding-left: 1.2rem;
+}
+
+ol li {
+  margin-bottom: .55rem;
+  color: var(--muted);
+}
+
+.package .price {
+  margin: .2rem 0 .7rem;
+  font-weight: 800;
+  color: var(--brand);
+}
+
+.package ul,
+.card ul,
+.hero-card ul {
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.featured {
+  border-color: var(--brand);
+}
+
+.stack {
+  display: grid;
+  gap: .5rem;
+}
+
+input,
+textarea,
+button {
+  font: inherit;
+}
+
+input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: .65rem .7rem;
+  background: #fff;
+}
+
+.error {
+  margin-top: .8rem;
+  padding: .65rem;
+  border-radius: 10px;
+  border: 1px solid #fecdca;
+  background: #fee4e2;
+  color: #b42318;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+#consultant-link {
+  margin-top: .8rem;
+  display: inline-block;
+}
+
+@media (max-width: 960px) {
+  .hero,
+  .split,
+  .grid-3,
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  nav {
+    justify-content: flex-end;
+  }
+}
