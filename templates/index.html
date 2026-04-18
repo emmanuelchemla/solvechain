@@ -49,7 +49,6 @@
             </p>
             <div class="cta-row">
               <a class="btn" href="#auth">Start Now</a>
-              <a class="btn btn-ghost" href="#flow">See Workflow</a>
             </div>
           </div>
         </div>
@@ -173,69 +172,36 @@
       <section id="auth" class="band reveal">
         <div class="auth-wrap">
           <h2>Try SolveChain</h2>
-          <p id="auth-state" class="muted"></p>
           <div class="auth-grid">
-            <form id="register-form" class="stack form-col">
-              <h3>Create account</h3>
-              <input
-                id="register-name"
-                type="text"
-                placeholder="Name"
-                required
-              />
-              <input
-                id="register-email"
-                type="email"
-                placeholder="Email"
-                required
-              />
-              <input
-                id="register-password"
-                type="password"
-                placeholder="Password (min 8 chars)"
-                required
-                minlength="8"
-              />
-              <button type="submit" class="btn">
-                Register & Access Consultant
-              </button>
-            </form>
-
-            <form id="login-form" class="stack form-col">
-              <h3>Already registered?</h3>
+            <form id="auth-form" class="stack form-col">
+              <h3>Login or Register</h3>
               <p class="demo-cred">
                 <strong>Demo login:</strong> demo@solvechain.app /
                 demo@solvechain.app
               </p>
               <input
-                id="login-email"
+                id="auth-name"
+                type="text"
+                placeholder="Name (optional)"
+              />
+              <input
+                id="auth-email"
                 type="email"
                 placeholder="Email"
                 required
               />
               <input
-                id="login-password"
+                id="auth-password"
                 type="password"
-                placeholder="Password"
+                placeholder="Password (min 8 chars)"
                 required
                 minlength="8"
               />
-              <button type="submit" class="btn">Login</button>
-              <button
-                id="logout-btn"
-                type="button"
-                class="btn btn-ghost"
-                hidden
-              >
-                Logout
-              </button>
+              <button type="submit" class="btn">Login or Register</button>
             </form>
           </div>
 
           <p id="auth-error" class="error" hidden></p>
-          <a id="consultant-link" class="btn" href="/consultant" hidden
-            >Go To Consultant App</a
-          >
         </div>
       </section>
     </main>

@@ -321,20 +321,16 @@ ol {
 
 .auth-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 1rem;
   margin-top: 1rem;
+  max-width: 560px;
 }
 
 .form-col {
-  padding-right: 1rem;
-  border-right: 1px solid var(--line);
-}
-
-.form-col:last-child {
-  border-right: 0;
   padding-right: 0;
-  padding-left: 1rem;
+  border-right: 0;
+  padding-left: 0;
 }
 
 .stack { display: grid; gap: .55rem; }
@@ -361,11 +357,6 @@ input {
 
 .muted { color: var(--muted); }
 
-#consultant-link {
-  margin-top: .8rem;
-  display: inline-block;
-}
-
 .reveal {
   opacity: 0;
   transform: translateY(20px);
@@ -390,7 +381,6 @@ input {
 
   .form-col,
   .form-col:last-child {
-    border-right: 0;
     padding-right: 0;
     padding-left: 0;
   }

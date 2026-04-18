@@ -1,9 +1,5 @@
-const registerForm = document.getElementById('register-form');
-const loginForm = document.getElementById('login-form');
-const logoutBtn = document.getElementById('logout-btn');
+const authForm = document.getElementById('auth-form');
 const authError = document.getElementById('auth-error');
-const authState = document.getElementById('auth-state');
-const consultantLink = document.getElementById('consultant-link');
 const menuToggle = document.getElementById('menu-toggle');
 const navMenu = document.getElementById('nav-menu');
 
@@ -18,15 +14,11 @@ function clearError() {
 }
 
 function setAuthenticated(user) {
-  authState.textContent = `Signed in as ${user.name} (${user.email}).`;
-  consultantLink.hidden = false;
-  logoutBtn.hidden = false;
+  // no-op on landing page; successful auth redirects to consultant
 }
 
 function setAnonymous() {
-  authState.textContent = 'Create an account or login to access the consultant app.';
-  consultantLink.hidden = true;
-  logoutBtn.hidden = true;
+  // no-op on landing page
 }
 
 async function postJSON(path, body) {
@@ -94,50 +86,36 @@ function wireMenu() {
   });
 }
 
-registerForm.addEventListener('submit', async (event) => {
+authForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   clearError();
 
-  const body = {
-    name: document.getElementById('register-name').value.trim(),
-    email: document.getElementById('register-email').value.trim(),
-    password: document.getElementById('register-password').value,
-  };
+  const nameInput = document.getElementById('auth-name').value.trim();
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
 
   try {
-    const payload = await postJSON('/api/auth/register', body);
+    const payload = await postJSON('/api/auth/login', { email, password });
     setAuthenticated(payload);
     window.location.href = '/consultant';
   } catch (error) {
-    showError(error.message);
-  }
-});
+    if (error.message !== 'Invalid credentials') {
+      showError(error.message);
+      return;
+    }
 
-loginForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  clearError();
-
-  const body = {
-    email: document.getElementById('login-email').value.trim(),
-    password: document.getElementById('login-password').value,
-  };
-
-  try {
-    const payload = await postJSON('/api/auth/login', body);
-    setAuthenticated(payload);
-    window.location.href = '/consultant';
-  } catch (error) {
-    showError(error.message);
-  }
-});
-
-logoutBtn.addEventListener('click', async () => {
-  clearError();
-  try {
-    await postJSON('/api/auth/logout', {});
-    setAnonymous();
-  } catch (error) {
-    showError(error.message);
+    const fallbackName = nameInput || email.split('@')[0] || 'New User';
+    try {
+      const payload = await postJSON('/api/auth/register', {
+        name: fallbackName,
+        email,
+        password,
+      });
+      setAuthenticated(payload);
+      window.location.href = '/consultant';
+    } catch (registerError) {
+      showError(registerError.message);
+    }
   }
 });
 
