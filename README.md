@@ -7,9 +7,8 @@ This project includes:
 3. A protected consultant app (`/consultant`) that helps users create FastAPI webapps through:
    - pain-point input
    - follow-up discovery questions
-   - generated app version 1
-   - iterative feedback loop to generate new versions
-4. ZIP download for each generated FastAPI version.
+   - instant live preview for generated app version 1
+   - iterative feedback loop in preview mode to generate new versions
 
 ## Run
 

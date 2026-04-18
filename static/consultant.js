@@ -51,7 +51,7 @@ function renderVersions() {
           <h3>Version ${version.version}</h3>
           <p>${version.summary}</p>
           <ul>${features}</ul>
-          <a href="${version.download}" target="_blank" rel="noopener">Download FastAPI project ZIP</a>
+          <a href="${version.preview_url}">Open Live Preview</a>
         </article>
       `;
     })
@@ -151,6 +151,7 @@ generateBtn.addEventListener('click', async () => {
     state.versions.unshift(version);
     outputPanel.hidden = false;
     renderVersions();
+    window.location.href = version.preview_url;
   } catch (error) {
     showError(error.message);
   }
@@ -185,6 +186,7 @@ feedbackForm.addEventListener('submit', async (event) => {
     feedbackInput.value = '';
     state.versions.unshift(version);
     renderVersions();
+    window.location.href = version.preview_url;
   } catch (error) {
     showError(error.message);
   }

@@ -156,6 +156,20 @@ def _require_user(request: Request) -> dict[str, str]:
     return user
 
 
+def _owned_session(session_id: str, user_email: str) -> SessionState:
+    state = SESSIONS.get(session_id)
+    if not state or state.user_email != user_email:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return state
+
+
+def _owned_version(state: SessionState, version: int) -> GeneratedVersion:
+    match = next((item for item in state.versions if item.version == version), None)
+    if not match:
+        raise HTTPException(status_code=404, detail="Version not found")
+    return match
+
+
 def _extract_focus(pain_point: str, answers: list[str]) -> str:
     source = " ".join([pain_point, *answers]).lower()
     mapping = {
@@ -317,7 +331,7 @@ def _build_generated_fastapi_files(
           <meta charset=\"utf-8\" />
           <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
           <title>{app_title}</title>
-          <link rel=\"stylesheet\" href=\"/static/styles.css\" />
+          <link rel=\"stylesheet\" href=\"./static/styles.css\" />
         </head>
         <body>
           <main class=\"shell\">
@@ -336,7 +350,7 @@ def _build_generated_fastapi_files(
               <div id=\"cards\" class=\"cards\"></div>
             </section>
           </main>
-          <script src=\"/static/app.js\"></script>
+          <script src=\"./static/app.js\"></script>
         </body>
         </html>
         """
@@ -402,7 +416,7 @@ def _build_generated_fastapi_files(
         textwrap.dedent(
             """
         async function run() {
-          const res = await fetch('/api/cards');
+          const res = await fetch('./api/cards');
           const cards = await res.json();
           const host = document.getElementById('cards');
 
@@ -510,6 +524,85 @@ async def consultant(request: Request) -> HTMLResponse:
     )
 
 
+@app.get("/preview/{session_id}/{version}", response_class=HTMLResponse)
+async def preview_workspace(
+    request: Request, session_id: str, version: int
+) -> HTMLResponse:
+    user = _current_user(request)
+    if not user:
+        return RedirectResponse(url="/#auth", status_code=303)
+
+    state = _owned_session(session_id, user["email"])
+    match = _owned_version(state, version)
+    return templates.TemplateResponse(
+        "preview.html",
+        {
+            "request": request,
+            "session_id": session_id,
+            "version": version,
+            "summary": match.summary,
+            "features": match.feature_list,
+            "app_url": f"/preview/{session_id}/{version}/app/",
+        },
+    )
+
+
+@app.get("/preview/{session_id}/{version}/app/", response_class=HTMLResponse)
+async def preview_app_index(
+    request: Request, session_id: str, version: int
+) -> HTMLResponse:
+    user = _require_user(request)
+    state = _owned_session(session_id, user["email"])
+    match = _owned_version(state, version)
+    html = match.files.get("templates/index.html")
+    if not html:
+        raise HTTPException(status_code=404, detail="Generated app index missing")
+    return HTMLResponse(content=html)
+
+
+@app.get("/preview/{session_id}/{version}/app/static/{asset_path:path}")
+async def preview_app_static(
+    request: Request, session_id: str, version: int, asset_path: str
+) -> Response:
+    user = _require_user(request)
+    state = _owned_session(session_id, user["email"])
+    match = _owned_version(state, version)
+    key = f"static/{asset_path}"
+    content = match.files.get(key)
+    if content is None:
+        raise HTTPException(status_code=404, detail="Generated static asset not found")
+
+    media_type = "text/plain"
+    if asset_path.endswith(".css"):
+        media_type = "text/css"
+    elif asset_path.endswith(".js"):
+        media_type = "application/javascript"
+    elif asset_path.endswith(".html"):
+        media_type = "text/html"
+    return Response(content=content, media_type=media_type)
+
+
+@app.get("/preview/{session_id}/{version}/app/api/cards")
+async def preview_app_cards(
+    request: Request, session_id: str, version: int
+) -> list[dict[str, str]]:
+    user = _require_user(request)
+    state = _owned_session(session_id, user["email"])
+    match = _owned_version(state, version)
+
+    cards: list[dict[str, str]] = []
+    for idx, feature in enumerate(match.feature_list[:5]):
+        cards.append(
+            {
+                "id": f"card-{idx + 1}",
+                "title": feature,
+                "status": "Active",
+                "owner": "Ops",
+            }
+        )
+    return cards
+
+
 @app.post("/api/auth/register")
 async def register(payload: RegisterRequest, response: Response) -> dict[str, Any]:
     email = payload.email.lower().strip()
@@ -596,9 +689,7 @@ async def answer_question(
     payload: SessionAnswerRequest, request: Request
 ) -> dict[str, Any]:
     user = _require_user(request)
-    state = SESSIONS.get(payload.session_id)
-    if not state or state.user_email != user["email"]:
-        raise HTTPException(status_code=404, detail="Session not found")
+    state = _owned_session(payload.session_id, user["email"])
 
     if len(state.answers) >= len(state.questions):
         return {
@@ -628,9 +719,7 @@ async def generate_version(
     payload: GenerateRequest, request: Request
 ) -> dict[str, Any]:
     user = _require_user(request)
-    state = SESSIONS.get(payload.session_id)
-    if not state or state.user_email != user["email"]:
-        raise HTTPException(status_code=404, detail="Session not found")
+    state = _owned_session(payload.session_id, user["email"])
 
     if len(state.answers) < len(state.questions):
         raise HTTPException(
@@ -644,16 +733,15 @@ async def generate_version(
         "summary": version_obj.summary,
         "features": version_obj.feature_list,
         "files": sorted(version_obj.files.keys()),
-        "download": f"/api/version/download?session_id={state.session_id}&version={version_obj.version}",
+        "preview_url": f"/preview/{state.session_id}/{version_obj.version}",
+        "next_step": "Open the live preview, test it, then submit feedback to generate the next version.",
     }
 
 
 @app.post("/api/feedback")
 async def feedback_loop(payload: FeedbackRequest, request: Request) -> dict[str, Any]:
     user = _require_user(request)
-    state = SESSIONS.get(payload.session_id)
-    if not state or state.user_email != user["email"]:
-        raise HTTPException(status_code=404, detail="Session not found")
+    state = _owned_session(payload.session_id, user["email"])
 
     if not state.versions:
         raise HTTPException(
@@ -667,16 +755,15 @@ async def feedback_loop(payload: FeedbackRequest, request: Request) -> dict[str,
         "summary": version_obj.summary,
         "features": version_obj.feature_list,
         "files": sorted(version_obj.files.keys()),
-        "download": f"/api/version/download?session_id={state.session_id}&version={version_obj.version}",
+        "preview_url": f"/preview/{state.session_id}/{version_obj.version}",
+        "next_step": "Open the live preview, test it, then submit feedback to generate the next version.",
     }
 
 
 @app.get("/api/session/{session_id}")
 async def session_status(session_id: str, request: Request) -> dict[str, Any]:
     user = _require_user(request)
-    state = SESSIONS.get(session_id)
-    if not state or state.user_email != user["email"]:
-        raise HTTPException(status_code=404, detail="Session not found")
+    state = _owned_session(session_id, user["email"])
 
     return {
         "session_id": state.session_id,
@@ -689,6 +776,7 @@ async def session_status(session_id: str, request: Request) -> dict[str, Any]:
                 "created_at": version.created_at,
                 "summary": version.summary,
                 "features": version.feature_list,
+                "preview_url": f"/preview/{state.session_id}/{version.version}",
             }
             for version in state.versions
         ],
@@ -700,13 +788,8 @@ async def download_version(
     session_id: str, version: int, request: Request
 ) -> StreamingResponse:
     user = _require_user(request)
-    state = SESSIONS.get(session_id)
-    if not state or state.user_email != user["email"]:
-        raise HTTPException(status_code=404, detail="Session not found")
-
-    match = next((item for item in state.versions if item.version == version), None)
-    if not match:
-        raise HTTPException(status_code=404, detail="Version not found")
+    state = _owned_session(session_id, user["email"])
+    match = _owned_version(state, version)
 
     archive = _pack_version_as_zip(match)
     filename = f"generated-fastapi-v{version}.zip"

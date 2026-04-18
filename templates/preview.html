@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SolveChain Preview v{{ version }}</title>
+  <link rel="stylesheet" href="/static/preview.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="head">
+      <div>
+        <p class="eyebrow">Live Version</p>
+        <h1>Preview v{{ version }}</h1>
+        <p>{{ summary }}</p>
+      </div>
+      <div class="head-links">
+        <a href="/consultant">Back to Consultant</a>
+        <a href="/">Home</a>
+      </div>
+    </header>
+
+    <section class="layout">
+      <article class="panel app-panel">
+        <h2>Use It Now</h2>
+        <iframe src="{{ app_url }}" title="Generated app preview"></iframe>
+      </article>
+
+      <aside class="panel action-panel">
+        <h2>Next Step</h2>
+        <p>Try the app on the left, then submit concrete feedback here. We will generate the next version immediately.</p>
+
+        <h3>Current Features</h3>
+        <ul>
+          {% for feature in features %}
+          <li>{{ feature }}</li>
+          {% endfor %}
+        </ul>
+
+        <form id="feedback-form" class="stack">
+          <label for="feedback">What should change in v{{ version + 1 }}?</label>
+          <textarea id="feedback" rows="5" placeholder="Example: Add role-based approvals, search, and clearer status states."></textarea>
+          <button type="submit">Generate Next Version</button>
+        </form>
+
+        <p id="status" class="muted"></p>
+        <p id="error" class="error" hidden></p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    window.SOLVECHAIN_PREVIEW = {
+      sessionId: "{{ session_id }}",
+      version: {{ version }}
+    };
+  </script>
+  <script src="/static/preview.js"></script>
+</body>
+</html>
