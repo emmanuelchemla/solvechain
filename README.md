@@ -1,4 +1,4 @@
-# ForgeFlow - FastAPI Webapp Consultant
+# SolveChain - Discovery to Action
 
 This project includes:
 
