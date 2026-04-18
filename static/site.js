@@ -52,6 +52,23 @@ async function loadAuth() {
   }
 }
 
+function wireScrollReveal() {
+  const elements = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.18 }
+  );
+
+  elements.forEach((element) => observer.observe(element));
+}
+
 registerForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   clearError();
@@ -99,4 +116,5 @@ logoutBtn.addEventListener('click', async () => {
   }
 });
 
+wireScrollReveal();
 loadAuth().catch((error) => showError(error.message));
