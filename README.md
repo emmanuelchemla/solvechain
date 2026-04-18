@@ -1,19 +1,16 @@
 # SolveChain - Discovery to Action
 
-This project includes:
+A consultant app to discover needs and build solutions:
 
-1. A startup-style marketing website (`/`) with pitch, testimonials, process, packages, and company/about sections.
-2. Register/Login experience for access control.
-3. A protected consultant app (`/consultant`) that helps users create FastAPI webapps through:
-   - pain-point input
-   - follow-up discovery questions
-   - instant live preview for generated app version 1
-   - iterative feedback loop in preview mode to generate new versions
+- chat (web based or integrated in communication tools) about operations, pain-points, needs
+- aggregation of the different users responses
+- instant live app propositions with ratings
+- immediate previews of app versions
+- iterative feedback loop
 
 ## Run
 
 ```bash
-source ~/.venvs/autoapp/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
