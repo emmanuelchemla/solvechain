@@ -6,6 +6,8 @@ const navMenu = document.getElementById('nav-menu');
 
 const ideaStrip = document.getElementById('idea-strip');
 const selectedTitle = document.getElementById('selected-title');
+const selectedFunction = document.getElementById('selected-function');
+const selectedRationale = document.getElementById('selected-rationale');
 const appFrame = document.getElementById('app-frame');
 
 function normalizeErrorDetail(detail) {
@@ -72,6 +74,8 @@ function setActiveIdea(card) {
   ideaStrip.querySelectorAll('.idea-card').forEach((node) => node.classList.remove('active'));
   card.classList.add('active');
   selectedTitle.textContent = card.dataset.title;
+  selectedFunction.innerHTML = `<strong>Function:</strong> ${card.dataset.function || ''}`;
+  selectedRationale.innerHTML = `<strong>Rationale:</strong> ${card.dataset.rationale || ''}`;
   appFrame.src = card.dataset.appUrl;
 }
 

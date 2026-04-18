@@ -196,6 +196,13 @@ def _build_version_ideas(
         )
         low = 2200 + (idx * 950)
         high = low + 2600
+        function = (
+            f"This app idea focuses on {title.lower()} and gives teams a clear, daily workflow."
+        )
+        rationale = (
+            "This is important because repeated friction appears across multiple users, "
+            "and high-frequency pain points create the fastest operational impact."
+        )
         ideas.append(
             {
                 "id": str(idx),
@@ -205,6 +212,8 @@ def _build_version_ideas(
                 "importance_stars": importance_stars,
                 "feasibility_stars": feasibility_stars,
                 "price": f"${low:,} - ${high:,}",
+                "function": function,
+                "rationale": rationale,
                 "app_url": f"/preview/{session_id}/{version}/app/?idea={idx}",
             }
         )

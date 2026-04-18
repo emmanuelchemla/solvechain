@@ -151,13 +151,15 @@ body {
   padding: .85rem;
   text-align: left;
   cursor: pointer;
+  position: relative;
   transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
 }
 
 .idea-card.active {
-  border-color: #78a9e2;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 26px rgba(17, 25, 39, 0.1);
+  border-color: #2563eb;
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.25);
+  background: linear-gradient(180deg, #ffffff 0%, #f2f8ff 100%);
 }
 
 .idea-card h3 {
@@ -187,6 +189,41 @@ body {
   font-size: .96rem;
   color: #102336;
   font-weight: 700;
+}
+
+.idea-tooltip {
+  display: none;
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: 1px solid #c5d9f3;
+  border-radius: 10px;
+  background: #f8fbff;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+  padding: .55rem .6rem;
+}
+
+.idea-tooltip p {
+  margin: 0 0 .35rem;
+  font-size: .8rem;
+  color: #334155;
+  line-height: 1.3;
+}
+
+.idea-tooltip p:last-child {
+  margin-bottom: 0;
+}
+
+.idea-card:hover .idea-tooltip,
+.idea-card:focus-visible .idea-tooltip {
+  display: block;
+}
+
+.context-line {
+  margin: .25rem 0 .45rem;
+  color: #334155;
+  line-height: 1.35;
 }
 
 .preview-panel h3 {
