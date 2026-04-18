@@ -36,7 +36,7 @@ AUTH_COOKIE_NAME = "wc_auth"
 
 
 class StartSessionRequest(BaseModel):
-    pain_point: str = Field(min_length=10, max_length=1500)
+    pain_point: str = Field(min_length=1, max_length=1500)
 
 
 class SessionAnswerRequest(BaseModel):
@@ -50,7 +50,7 @@ class GenerateRequest(BaseModel):
 
 class FeedbackRequest(BaseModel):
     session_id: str
-    feedback: str = Field(min_length=3, max_length=3000)
+    feedback: str = Field(min_length=1, max_length=3000)
 
 
 class RegisterRequest(BaseModel):
@@ -168,6 +168,47 @@ def _owned_version(state: SessionState, version: int) -> GeneratedVersion:
     if not match:
         raise HTTPException(status_code=404, detail="Version not found")
     return match
+
+
+def _build_version_ideas(
+    session_id: str, version: int, version_obj: GeneratedVersion
+) -> list[dict[str, str]]:
+    base_titles = list(version_obj.feature_list)
+    if len(base_titles) < 6:
+        base_titles.extend(
+            [
+                "Workflow intake and triage",
+                "Task orchestration and ownership",
+                "Approval and escalation workflow",
+                "Operational reporting cockpit",
+            ]
+        )
+
+    ideas: list[dict[str, str]] = []
+    for idx, title in enumerate(base_titles[:8]):
+        importance = 9 - (idx % 4)  # 9..6
+        feasibility = 8 - (idx % 3)  # 8..6
+        importance_stars = "★" * max(1, round(importance / 2)) + "☆" * (
+            5 - max(1, round(importance / 2))
+        )
+        feasibility_stars = "★" * max(1, round(feasibility / 2)) + "☆" * (
+            5 - max(1, round(feasibility / 2))
+        )
+        low = 2200 + (idx * 950)
+        high = low + 2600
+        ideas.append(
+            {
+                "id": str(idx),
+                "title": title,
+                "importance": f"{importance}/10",
+                "feasibility": f"{feasibility}/10",
+                "importance_stars": importance_stars,
+                "feasibility_stars": feasibility_stars,
+                "price": f"${low:,} - ${high:,}",
+                "app_url": f"/preview/{session_id}/{version}/app/?idea={idx}",
+            }
+        )
+    return ideas
 
 
 def _extract_focus(pain_point: str, answers: list[str]) -> str:
@@ -433,7 +474,7 @@ def _build_generated_fastapi_files(
         textwrap.dedent(
             """
         async function run() {
-          const res = await fetch('./api/cards');
+          const res = await fetch('./api/cards' + window.location.search);
           const cards = await res.json();
           const host = document.getElementById('cards');
 
@@ -551,6 +592,8 @@ async def preview_workspace(
 
     state = _owned_session(session_id, user["email"])
     match = _owned_version(state, version)
+    ideas = _build_version_ideas(session_id, version, match)
+    default_app_url = ideas[0]["app_url"] if ideas else f"/preview/{session_id}/{version}/app/"
     return templates.TemplateResponse(
         "preview.html",
         {
@@ -559,7 +602,8 @@ async def preview_workspace(
             "version": version,
             "summary": match.summary,
             "features": match.feature_list,
-            "app_url": f"/preview/{session_id}/{version}/app/",
+            "app_url": default_app_url,
+            "ideas": ideas,
         },
     )
 
@@ -607,12 +651,24 @@ async def preview_app_cards(
     state = _owned_session(session_id, user["email"])
     match = _owned_version(state, version)
 
+    idea_idx_raw = request.query_params.get("idea", "0")
+    try:
+        idea_idx = max(0, int(idea_idx_raw))
+    except ValueError:
+        idea_idx = 0
+
+    ideas = _build_version_ideas(session_id, version, match)
+    selected_title = ideas[min(idea_idx, len(ideas) - 1)]["title"] if ideas else "Core workflow"
+
     cards: list[dict[str, str]] = []
-    for idx, feature in enumerate(match.feature_list[:5]):
+    for idx, feature in enumerate(match.feature_list[:4]):
+        title = feature
+        if idx == 0:
+            title = selected_title
         cards.append(
             {
                 "id": f"card-{idx + 1}",
-                "title": feature,
+                "title": title,
                 "status": "Active",
                 "owner": "Ops",
             }

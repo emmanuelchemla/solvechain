@@ -1,22 +1,12 @@
 const state = window.SOLVECHAIN_PREVIEW;
 
-const feedbackForm = document.getElementById('feedback-form');
-const feedbackInput = document.getElementById('feedback');
-const statusEl = document.getElementById('status');
-const errorEl = document.getElementById('error');
 const logoutBtn = document.getElementById('logout-btn');
 const menuToggle = document.getElementById('menu-toggle');
 const navMenu = document.getElementById('nav-menu');
 
-function showError(message) {
-  errorEl.hidden = false;
-  errorEl.textContent = message;
-}
-
-function clearError() {
-  errorEl.hidden = true;
-  errorEl.textContent = '';
-}
+const ideaStrip = document.getElementById('idea-strip');
+const selectedTitle = document.getElementById('selected-title');
+const appFrame = document.getElementById('app-frame');
 
 function normalizeErrorDetail(detail) {
   if (!detail) return 'Request failed';
@@ -78,40 +68,84 @@ function wireMenu() {
   });
 }
 
-feedbackForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  clearError();
+function setActiveIdea(card) {
+  ideaStrip.querySelectorAll('.idea-card').forEach((node) => node.classList.remove('active'));
+  card.classList.add('active');
+  selectedTitle.textContent = card.dataset.title;
+  appFrame.src = card.dataset.appUrl;
+}
 
-  const feedback = feedbackInput.value.trim();
-  if (feedback.length < 3) {
-    showError('Please provide specific feedback (at least 3 characters).');
-    return;
+function wireIdeaCards() {
+  ideaStrip.querySelectorAll('.idea-card').forEach((card) => {
+    card.addEventListener('click', () => setActiveIdea(card));
+  });
+}
+
+function wireFeedbackBox(prefix) {
+  const feedbackForm = document.getElementById(`${prefix}-feedback-form`);
+  const feedbackInput = document.getElementById(`${prefix}-feedback-input`);
+  const errorEl = document.getElementById(`${prefix}-error`);
+  const feedbackThread = document.getElementById(`${prefix}-feedback-thread`);
+
+  const openingMessage = prefix === 'ideas'
+    ? 'What do you think about these ideas?'
+    : 'What do you think about this app?';
+
+  function showError(message) {
+    errorEl.hidden = false;
+    errorEl.textContent = message;
   }
 
-  statusEl.textContent = 'Generating next version...';
-
-  try {
-    const payload = await postJSON('/api/feedback', {
-      session_id: state.sessionId,
-      feedback,
-    });
-
-    statusEl.textContent = 'Done. Opening the new version...';
-    window.location.href = payload.preview_url;
-  } catch (error) {
-    statusEl.textContent = '';
-    showError(error.message);
+  function clearError() {
+    errorEl.hidden = true;
+    errorEl.textContent = '';
   }
-});
+
+  function addBubble(role, text) {
+    const item = document.createElement('article');
+    item.className = `msg ${role}`;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+
+    item.appendChild(bubble);
+    feedbackThread.appendChild(item);
+    feedbackThread.scrollTop = feedbackThread.scrollHeight;
+  }
+
+  feedbackForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    clearError();
+
+    const text = feedbackInput.value.trim();
+    if (!text) return;
+
+    addBubble('user', text);
+    feedbackInput.value = '';
+    addBubble('agent', 'What else');
+  });
+
+  feedbackInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && event.metaKey) {
+      event.preventDefault();
+      feedbackForm.requestSubmit();
+    }
+  });
+
+  addBubble('agent', openingMessage);
+}
 
 logoutBtn.addEventListener('click', async () => {
-  clearError();
   try {
     await postJSON('/api/auth/logout', {});
     window.location.href = '/#auth';
   } catch (error) {
-    showError(error.message);
+    console.error(error);
   }
 });
 
 wireMenu();
+wireIdeaCards();
+wireFeedbackBox('ideas');
+wireFeedbackBox('preview');

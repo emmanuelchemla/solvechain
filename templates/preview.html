@@ -26,39 +26,53 @@
   </header>
 
   <main class="page">
-    <header class="head">
-      <div>
-        <p class="eyebrow">Live Version</p>
-        <h1>Preview v{{ version }}</h1>
-        <p>{{ summary }}</p>
-      </div>
-    </header>
-
-    <section class="layout">
-      <article class="panel app-panel">
-        <h2>Use It Now</h2>
-        <iframe src="{{ app_url }}" title="Generated app preview"></iframe>
+    <section class="dash-row">
+      <article class="panel ideas-panel">
+        <h1>Web app ideas</h1>
+        <div id="idea-strip" class="idea-strip">
+          {% for idea in ideas %}
+          <button
+            class="idea-card{% if loop.first %} active{% endif %}"
+            type="button"
+            data-index="{{ loop.index0 }}"
+            data-title="{{ idea.title }}"
+            data-app-url="{{ idea.app_url }}"
+          >
+            <h3>{{ idea.title }}</h3>
+            <p class="metric">Importance <span class="stars">{{ idea.importance_stars }}</span></p>
+            <p class="metric">Feasibility <span class="stars">{{ idea.feasibility_stars }}</span></p>
+            <p class="price">Estimated {{ idea.price }}</p>
+          </button>
+          {% endfor %}
+        </div>
       </article>
 
-      <aside class="panel action-panel">
-        <h2>Next Step</h2>
-        <p>Try the app on the left, then submit concrete feedback here. We will generate the next version immediately.</p>
-
-        <h3>Current Features</h3>
-        <ul>
-          {% for feature in features %}
-          <li>{{ feature }}</li>
-          {% endfor %}
-        </ul>
-
-        <form id="feedback-form" class="stack">
-          <label for="feedback">What should change in v{{ version + 1 }}?</label>
-          <textarea id="feedback" rows="5" placeholder="Example: Add role-based approvals, search, and clearer status states."></textarea>
-          <button type="submit">Generate Next Version</button>
+      <aside class="panel feedback-panel">
+        <h2>Feedback</h2>
+        <div id="ideas-feedback-thread" class="feedback-thread"></div>
+        <form id="ideas-feedback-form" class="stack">
+          <textarea id="ideas-feedback-input" rows="3" placeholder="What should change in these web app ideas?"></textarea>
+          <button type="submit">Send</button>
         </form>
+        <p id="ideas-error" class="error" hidden></p>
+      </aside>
+    </section>
 
-        <p id="status" class="muted"></p>
-        <p id="error" class="error" hidden></p>
+    <section class="dash-row">
+      <article class="panel preview-panel">
+        <h1>Webapp preview</h1>
+        <h3 id="selected-title">{{ ideas[0].title if ideas else 'Generated App' }}</h3>
+        <iframe id="app-frame" src="{{ app_url }}" title="Generated app preview"></iframe>
+      </article>
+
+      <aside class="panel feedback-panel">
+        <h2>Feedback</h2>
+        <div id="preview-feedback-thread" class="feedback-thread"></div>
+        <form id="preview-feedback-form" class="stack">
+          <textarea id="preview-feedback-input" rows="3" placeholder="What should change in this preview app?"></textarea>
+          <button type="submit">Send</button>
+        </form>
+        <p id="preview-error" class="error" hidden></p>
       </aside>
     </section>
   </main>

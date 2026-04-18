@@ -121,7 +121,7 @@ chatForm.addEventListener('submit', (event) => {
 
   if (state.responses.length >= 1) {
     doneBtn.disabled = false;
-    statusEl.textContent = 'When ready, click "I\'m done thank you!" to generate your app.';
+    statusEl.textContent = '';
   }
 });
 
