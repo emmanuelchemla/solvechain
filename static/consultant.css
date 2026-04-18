@@ -148,7 +148,7 @@ body {
 }
 
 .chat-thread {
-  min-height: 320px;
+  min-height: 220px;
   max-height: 52vh;
   overflow: auto;
   display: grid;
@@ -158,6 +158,7 @@ body {
 
 .msg {
   display: flex;
+  align-items: flex-start;
 }
 
 .msg.agent {
@@ -227,6 +228,10 @@ button:disabled {
 .action-panel {
   display: grid;
   gap: .45rem;
+}
+
+#done-btn {
+  line-height: 1.35;
 }
 
 .muted {

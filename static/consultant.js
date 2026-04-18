@@ -1,11 +1,12 @@
-const prompts = [
-  'Tell us about things you believe could be automated in your job.',
+const openingPrompt = 'Let us see how I can help. I will ask a couple of questions about your daily job. Let us start right away: what could be automated in your daily job?';
+const scriptedReplies = [
   'Ok, how important is that pain point for you?',
   'Ok, how important is that pain point for you?',
 ];
+const fallbackReply = 'Excellent, thank you. Is there any other idea, pain point, difficulty you would like to tell me about';
 
 const state = {
-  step: 0,
+  replyIndex: 0,
   responses: [],
 };
 
@@ -113,14 +114,21 @@ chatForm.addEventListener('submit', (event) => {
   state.responses.push(text);
   chatInput.value = '';
 
-  if (state.step < prompts.length - 1) {
-    state.step += 1;
-    addBubble('agent', prompts[state.step]);
-  }
+  const reply = state.replyIndex < scriptedReplies.length
+    ? scriptedReplies[state.replyIndex++]
+    : fallbackReply;
+  addBubble('agent', reply);
 
-  if (state.responses.length >= 2) {
+  if (state.responses.length >= 1) {
     doneBtn.disabled = false;
     statusEl.textContent = 'When ready, click "I\'m done thank you!" to generate your app.';
+  }
+});
+
+chatInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' && event.metaKey) {
+    event.preventDefault();
+    chatForm.requestSubmit();
   }
 });
 
@@ -180,5 +188,5 @@ logoutBtn.addEventListener('click', async () => {
   }
 });
 
-addBubble('agent', prompts[0]);
+addBubble('agent', openingPrompt);
 wireMenu();
