@@ -86,6 +86,9 @@ class SessionState:
 SESSIONS: dict[str, SessionState] = {}
 USERS: dict[str, dict[str, str]] = {}
 AUTH_SESSIONS: dict[str, str] = {}
+DEMO_USER_EMAIL = "demo@forgeflow.app"
+DEMO_USER_PASSWORD = "demo12345"
+DEMO_USER_NAME = "Demo User"
 
 
 def _now_iso() -> str:
@@ -108,6 +111,17 @@ def _is_valid_email(email: str) -> bool:
 
 def _hash_password(password: str) -> str:
     return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+
+@app.on_event("startup")
+async def seed_demo_user() -> None:
+    if DEMO_USER_EMAIL not in USERS:
+        USERS[DEMO_USER_EMAIL] = {
+            "name": DEMO_USER_NAME,
+            "email": DEMO_USER_EMAIL,
+            "password_hash": _hash_password(DEMO_USER_PASSWORD),
+            "created_at": _now_iso(),
+        }
 
 
 def _set_auth_cookie(response: Response, token: str) -> None:
