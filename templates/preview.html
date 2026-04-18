@@ -29,21 +29,35 @@
     <section class="dash-row">
       <article class="panel ideas-panel">
         <h1>Web app ideas</h1>
+        <div id="ideas-generation" class="ideas-generation" aria-live="polite">
+          <p id="generation-status" class="generation-status">Synthesizing and ranking ideas...</p>
+          <div class="generation-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="generation-fill" class="generation-fill"></span>
+          </div>
+        </div>
         <div id="idea-strip" class="idea-strip">
           {% for idea in ideas %}
           <button
-            class="idea-card{% if loop.first %} active{% endif %}"
+            class="idea-card"
             type="button"
             data-index="{{ loop.index0 }}"
+            data-importance="{{ idea.importance }}"
             data-title="{{ idea.title }}"
             data-function="{{ idea.function }}"
             data-rationale="{{ idea.rationale }}"
             data-app-url="{{ idea.app_url }}"
+            data-ready="false"
           >
             <h3>{{ idea.title }}</h3>
             <p class="metric">Importance <span class="stars">{{ idea.importance_stars }}</span></p>
             <p class="metric">Feasibility <span class="stars">{{ idea.feasibility_stars }}</span></p>
             <p class="price">Estimated {{ idea.price }}</p>
+            <div class="card-status">
+              <div class="card-progress-track" aria-hidden="true">
+                <span class="card-progress-fill"></span>
+              </div>
+              <span class="card-check" aria-hidden="true">✓</span>
+            </div>
             <div class="idea-tooltip" aria-hidden="true">
               <p><strong>Function:</strong> {{ idea.function }}</p>
               <p><strong>Rationale:</strong> {{ idea.rationale }}</p>
@@ -67,10 +81,11 @@
     <section class="dash-row">
       <article class="panel preview-panel">
         <h1>Webapp preview</h1>
-        <h3 id="selected-title">{{ ideas[0].title if ideas else 'Generated App' }}</h3>
-        <p id="selected-function" class="context-line"><strong>Function:</strong> {{ ideas[0].function if ideas else '' }}</p>
-        <p id="selected-rationale" class="context-line"><strong>Rationale:</strong> {{ ideas[0].rationale if ideas else '' }}</p>
-        <iframe id="app-frame" src="{{ app_url }}" title="Generated app preview"></iframe>
+        <div id="preview-empty" class="preview-empty">Select a completed idea to open its preview.</div>
+        <h3 id="selected-title" hidden></h3>
+        <p id="selected-function" class="context-line" hidden></p>
+        <p id="selected-rationale" class="context-line" hidden></p>
+        <iframe id="app-frame" src="about:blank" title="Generated app preview" hidden></iframe>
       </article>
 
       <aside class="panel feedback-panel">
@@ -91,6 +106,6 @@
       version: {{ version }}
     };
   </script>
-  <script src="/static/preview.js"></script>
+  <script src="/static/preview.js?v=20260419a"></script>
 </body>
 </html>
