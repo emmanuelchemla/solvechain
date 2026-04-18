@@ -1,0 +1,116 @@
+:root {
+  --bg: #eef2f9;
+  --panel: #ffffff;
+  --line: #d8e1ef;
+  --text: #172033;
+  --muted: #49566b;
+  --brand: #005f73;
+  --brand-2: #0a9396;
+  --danger: #b42318;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(10, 147, 150, 0.18), transparent 42%),
+    radial-gradient(circle at 100% 20%, rgba(0, 95, 115, 0.18), transparent 32%),
+    var(--bg);
+  color: var(--text);
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+}
+
+.page {
+  max-width: 980px;
+  margin: 1.5rem auto 3rem;
+  padding: 0 1rem;
+}
+
+.hero {
+  margin-bottom: 1rem;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+}
+
+.hero p {
+  margin-top: .5rem;
+  color: var(--muted);
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.stack {
+  display: grid;
+  gap: .65rem;
+}
+
+textarea {
+  width: 100%;
+  resize: vertical;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  padding: .75rem;
+  font: inherit;
+  min-height: 96px;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: .7rem .95rem;
+  background: linear-gradient(130deg, var(--brand), var(--brand-2));
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(1.02);
+}
+
+.muted {
+  color: var(--muted);
+  margin: .5rem 0 0;
+}
+
+.error {
+  background: #fee4e2;
+  border: 1px solid #fecdca;
+  color: var(--danger);
+  border-radius: 10px;
+  padding: .75rem;
+}
+
+.version {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: .75rem;
+  margin-bottom: .7rem;
+}
+
+.version h3 {
+  margin: 0 0 .5rem;
+}
+
+.version ul {
+  margin: .4rem 0 .65rem;
+  padding-left: 1.1rem;
+}
+
+.version a {
+  color: var(--brand);
+  font-weight: 600;
+}

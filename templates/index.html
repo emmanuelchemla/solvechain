@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FastAPI Webapp Consultant</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <h1>FastAPI Webapp Consultant</h1>
+      <p>Describe a pain point, answer discovery questions, then generate and iterate FastAPI webapp versions.</p>
+    </header>
+
+    <section class="panel">
+      <h2>1. Pain Point</h2>
+      <form id="start-form" class="stack">
+        <label for="pain-point">What problem are we solving?</label>
+        <textarea id="pain-point" name="pain-point" rows="4" placeholder="Example: Our support tickets live in email, so we miss SLAs and duplicate work."></textarea>
+        <button type="submit">Start Discovery</button>
+      </form>
+      <p id="session-note" class="muted"></p>
+    </section>
+
+    <section class="panel" id="discovery-panel" hidden>
+      <h2>2. Follow-up Questions</h2>
+      <p id="question"></p>
+      <form id="answer-form" class="stack">
+        <textarea id="answer" rows="4" placeholder="Your answer"></textarea>
+        <button type="submit">Submit Answer</button>
+      </form>
+      <p id="remaining" class="muted"></p>
+      <button id="generate-btn" type="button" hidden>Generate FastAPI App v1</button>
+    </section>
+
+    <section class="panel" id="output-panel" hidden>
+      <h2>3. Generated Versions</h2>
+      <div id="versions"></div>
+      <form id="feedback-form" class="stack">
+        <label for="feedback">Feedback for next version</label>
+        <textarea id="feedback" rows="3" placeholder="Example: Add approvals, better mobile UX, and CSV exports."></textarea>
+        <button type="submit">Generate Next Version</button>
+      </form>
+    </section>
+
+    <p id="error" class="error" hidden></p>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
