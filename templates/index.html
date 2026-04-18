@@ -3,58 +3,72 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ForgeFlow | Build Internal Apps Fast</title>
+  <title>ForgeFlow | You have a pain point. We automate it.</title>
   <link rel="stylesheet" href="/static/site.css" />
 </head>
 <body>
+  <div class="banner">You have a pain point. We automate it. At scale.</div>
+
   <header class="topbar">
     <a class="brand" href="#home">ForgeFlow</a>
     <nav>
       <a href="#pitch">Pitch</a>
-      <a href="#testimonials">Testimonials</a>
+      <a href="#proof">Proof</a>
       <a href="#process">Process</a>
       <a href="#packages">Packages</a>
       <a href="#about">Who We Are</a>
-      <a href="#auth">Try / Register</a>
+      <a href="#auth">Try</a>
     </nav>
   </header>
 
   <main id="home">
     <section class="hero" id="pitch">
-      <div>
-        <p class="chip">From pain point to production app in one workflow</p>
-        <h1>We ship FastAPI webapps from your business reality, not generic templates.</h1>
-        <p class="lede">ForgeFlow interviews your team, extracts the real operational bottlenecks, and proposes versioned webapps you can iterate in a live feedback loop.</p>
+      <div class="hero-copy">
+        <p class="chip">Internal apps, without long build cycles</p>
+        <h1>Your employees tell us their pain points. We build the most impactful solution.</h1>
+        <p class="lede">No long discovery decks. No vague roadmap. Just a clear problem, a working FastAPI app, and rapid iteration.</p>
         <div class="cta-row">
-          <a class="btn" href="#auth">Start Building</a>
-          <a class="btn btn-ghost" href="#process">See Process</a>
+          <a class="btn" href="#auth">Start Now</a>
+          <a class="btn btn-ghost" href="#process">See How</a>
         </div>
       </div>
-      <aside class="hero-card">
-        <h2>What you get</h2>
-        <ul>
-          <li>Structured discovery with follow-up questions</li>
-          <li>Generated FastAPI app scaffolds</li>
-          <li>Version-by-version feedback upgrades</li>
-          <li>Downloadable project ZIPs per iteration</li>
-        </ul>
-      </aside>
+      <img class="hero-image" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1400&q=80" alt="Team building product dashboards" />
+    </section>
+
+    <section id="proof" class="section">
+      <article class="story-row">
+        <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80" alt="Operations team reviewing workflow" />
+        <div>
+          <h2>From friction to flow</h2>
+          <p>Messy workflow in email and spreadsheets? We turn it into one clean app.</p>
+          <p class="tight">You get speed, visibility, and ownership in days, not months.</p>
+        </div>
+      </article>
+
+      <article class="story-row reverse">
+        <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80" alt="Team collaboration session" />
+        <div>
+          <h2>Real feedback loop</h2>
+          <p>Version 1 ships fast. Your team gives feedback. Version 2 ships better.</p>
+          <p class="tight">Every iteration is concrete and downloadable.</p>
+        </div>
+      </article>
     </section>
 
     <section id="testimonials" class="section">
-      <h2>Teams using ForgeFlow</h2>
+      <h2>What teams say</h2>
       <div class="grid-3">
         <article class="card quote">
-          <p>"We moved from spreadsheet ticket triage to a usable internal app in one afternoon."</p>
-          <strong>Head of Ops, SaaS Startup</strong>
+          <p>"We replaced three tools with one app in a week."</p>
+          <strong>Head of Operations</strong>
         </article>
         <article class="card quote">
-          <p>"The follow-up questions surfaced edge cases we usually discover too late."</p>
-          <strong>Product Lead, Marketplace Team</strong>
+          <p>"The questions were sharp. The first version was usable."</p>
+          <strong>Product Manager</strong>
         </article>
         <article class="card quote">
-          <p>"Versioned feedback made stakeholder review concrete and fast."</p>
-          <strong>CTO, Services Company</strong>
+          <p>"Finally a workflow app people actually use."</p>
+          <strong>COO</strong>
         </article>
       </div>
     </section>
@@ -63,16 +77,15 @@
       <div>
         <h2>Process</h2>
         <ol>
-          <li><strong>Diagnose:</strong> Describe your pain point.</li>
-          <li><strong>Clarify:</strong> Answer targeted follow-up questions.</li>
-          <li><strong>Generate:</strong> Get FastAPI webapp version 1.</li>
-          <li><strong>Refine:</strong> Provide feedback and generate next versions.</li>
-          <li><strong>Deploy:</strong> Download and run your selected version.</li>
+          <li><strong>Tell us the pain.</strong></li>
+          <li><strong>Answer focused follow-up questions.</strong></li>
+          <li><strong>Get a working FastAPI app.</strong></li>
+          <li><strong>Give feedback, get a better version.</strong></li>
         </ol>
       </div>
       <div class="card process-panel">
-        <h3>Outcome</h3>
-        <p>A concrete app your team can run immediately, with a clear paper trail of decisions between each version.</p>
+        <h3>Simple promise</h3>
+        <p>You bring the context. We bring the system. Together, we ship impact quickly.</p>
       </div>
     </section>
 
@@ -83,8 +96,8 @@
           <h3>Starter</h3>
           <p class="price">$99 / month</p>
           <ul>
-            <li>1 active workspace</li>
-            <li>Core discovery + generation flow</li>
+            <li>1 workspace</li>
+            <li>Core generation flow</li>
             <li>Version history</li>
           </ul>
         </article>
@@ -92,9 +105,9 @@
           <h3>Growth</h3>
           <p class="price">$299 / month</p>
           <ul>
-            <li>5 active workspaces</li>
-            <li>Priority generation queue</li>
-            <li>Team collaboration notes</li>
+            <li>5 workspaces</li>
+            <li>Priority queue</li>
+            <li>Collaboration notes</li>
           </ul>
         </article>
         <article class="card package">
@@ -102,26 +115,19 @@
           <p class="price">Custom</p>
           <ul>
             <li>Unlimited workspaces</li>
-            <li>Custom integration hooks</li>
-            <li>Dedicated onboarding</li>
+            <li>Integration hooks</li>
+            <li>Dedicated support</li>
           </ul>
         </article>
       </div>
     </section>
 
     <section id="about" class="section split">
+      <img class="about-image" src="https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1200&q=80" alt="Product team working together" />
       <div>
         <h2>Who We Are</h2>
-        <p>We are a product and platform team focused on one problem: internal software takes too long to build and validate. ForgeFlow compresses that loop.</p>
-        <p>Our stack is intentionally pragmatic: FastAPI, clear workflows, and versioned outcomes you can inspect and run.</p>
-      </div>
-      <div class="card">
-        <h3>Why teams hire us</h3>
-        <ul>
-          <li>Less ambiguity before building</li>
-          <li>Faster stakeholder alignment</li>
-          <li>Shippable code, not slideware</li>
-        </ul>
+        <p>You have a pain point, we automate it, at scale.</p>
+        <p>Your employees tell us about their pain point, we build the most impactful solution.</p>
       </div>
     </section>
 
