@@ -7,11 +7,11 @@
   --brand: #005f73;
   --brand-2: #0a9396;
   --danger: #b42318;
+  --agent: #0f4c81;
+  --user: #e8f4ff;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -23,21 +23,96 @@ body {
   font-family: "Avenir Next", "Segoe UI", sans-serif;
 }
 
+.banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .8rem;
+  min-height: 72px;
+  padding: .85rem 1rem;
+  color: #fff;
+  background: linear-gradient(90deg, #071427, #091f3a);
+}
+
+.banner-title {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 900;
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.menu-toggle {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 99px;
+}
+
+.nav-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 1rem;
+  min-width: 220px;
+  display: none;
+  flex-direction: column;
+  gap: .25rem;
+  padding: .45rem;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 16px 32px rgba(17, 25, 39, 0.15);
+}
+
+.nav-menu.open { display: flex; }
+
+.nav-menu a,
+.nav-menu button {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: .5rem .55rem;
+  border-radius: 8px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nav-menu a:hover,
+.nav-menu button:hover {
+  background: #f1f5fb;
+}
+
 .page {
   max-width: 980px;
-  margin: 1.5rem auto 3rem;
-  padding: 0 1rem;
+  margin: 0 auto 3rem;
+  padding: 96px 1rem 0;
 }
 
 .hero {
-  margin-bottom: 1rem;
-}
-
-.hero-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
+  margin: 1.5rem 0 1rem;
 }
 
 .eyebrow {
@@ -59,29 +134,6 @@ body {
   color: var(--muted);
 }
 
-.hero-actions {
-  display: flex;
-  gap: .8rem;
-  align-items: center;
-}
-
-.hero-actions button {
-  padding: .45rem .75rem;
-}
-
-.text-link {
-  color: var(--brand);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-@media (max-width: 720px) {
-  .hero-top {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -91,9 +143,61 @@ body {
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
 }
 
-.stack {
+.chat-panel {
+  padding: .8rem;
+}
+
+.chat-thread {
+  min-height: 320px;
+  max-height: 52vh;
+  overflow: auto;
   display: grid;
-  gap: .65rem;
+  gap: .6rem;
+  padding: .2rem;
+}
+
+.msg {
+  display: flex;
+}
+
+.msg.agent {
+  justify-content: flex-end;
+}
+
+.msg.user {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: min(78%, 580px);
+  border-radius: 14px;
+  padding: .7rem .85rem;
+  line-height: 1.4;
+}
+
+.msg.agent .bubble {
+  background: var(--agent);
+  color: #fff;
+  border-top-right-radius: 4px;
+}
+
+.msg.user .bubble {
+  background: var(--user);
+  color: #13253a;
+  border: 1px solid #cfe4fb;
+  border-top-left-radius: 4px;
+}
+
+.chat-entry {
+  margin-top: .7rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .55rem;
+}
+
+textarea,
+button {
+  font: inherit;
 }
 
 textarea {
@@ -102,8 +206,7 @@ textarea {
   border-radius: 10px;
   border: 1px solid var(--line);
   padding: .75rem;
-  font: inherit;
-  min-height: 96px;
+  min-height: 56px;
 }
 
 button {
@@ -116,13 +219,19 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  filter: brightness(1.02);
+button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.action-panel {
+  display: grid;
+  gap: .45rem;
 }
 
 .muted {
   color: var(--muted);
-  margin: .5rem 0 0;
+  margin: .3rem 0 0;
 }
 
 .error {
@@ -133,23 +242,12 @@ button:hover {
   padding: .75rem;
 }
 
-.version {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: .75rem;
-  margin-bottom: .7rem;
-}
+@media (max-width: 720px) {
+  .chat-entry {
+    grid-template-columns: 1fr;
+  }
 
-.version h3 {
-  margin: 0 0 .5rem;
-}
-
-.version ul {
-  margin: .4rem 0 .65rem;
-  padding-left: 1.1rem;
-}
-
-.version a {
-  color: var(--brand);
-  font-weight: 600;
+  .bubble {
+    max-width: 92%;
+  }
 }

@@ -1,26 +1,23 @@
+const prompts = [
+  'Tell us about things you believe could be automated in your job.',
+  'Ok, how important is that pain point for you?',
+  'Ok, how important is that pain point for you?',
+];
+
 const state = {
-  sessionId: null,
-  versions: [],
+  step: 0,
+  responses: [],
 };
 
-const startForm = document.getElementById('start-form');
-const painPointInput = document.getElementById('pain-point');
-const sessionNote = document.getElementById('session-note');
-
-const discoveryPanel = document.getElementById('discovery-panel');
-const questionEl = document.getElementById('question');
-const answerForm = document.getElementById('answer-form');
-const answerInput = document.getElementById('answer');
-const remainingEl = document.getElementById('remaining');
-const generateBtn = document.getElementById('generate-btn');
-
-const outputPanel = document.getElementById('output-panel');
-const versionsEl = document.getElementById('versions');
-const feedbackForm = document.getElementById('feedback-form');
-const feedbackInput = document.getElementById('feedback');
-
-const logoutBtn = document.getElementById('logout-btn');
+const chatThread = document.getElementById('chat-thread');
+const chatForm = document.getElementById('chat-form');
+const chatInput = document.getElementById('chat-input');
+const doneBtn = document.getElementById('done-btn');
+const statusEl = document.getElementById('status');
 const errorEl = document.getElementById('error');
+const logoutBtn = document.getElementById('logout-btn');
+const menuToggle = document.getElementById('menu-toggle');
+const navMenu = document.getElementById('nav-menu');
 
 function showError(message) {
   errorEl.hidden = false;
@@ -32,30 +29,40 @@ function clearError() {
   errorEl.textContent = '';
 }
 
-function setQuestion(question, remaining) {
-  questionEl.textContent = question;
-  remainingEl.textContent = `Questions remaining: ${remaining}`;
+function addBubble(role, text) {
+  const item = document.createElement('article');
+  item.className = `msg ${role}`;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = text;
+
+  item.appendChild(bubble);
+  chatThread.appendChild(item);
+  chatThread.scrollTop = chatThread.scrollHeight;
 }
 
-function renderVersions() {
-  if (!state.versions.length) {
-    versionsEl.innerHTML = '<p class="muted">No versions generated yet.</p>';
-    return;
-  }
+function wireMenu() {
+  if (!menuToggle || !navMenu) return;
 
-  versionsEl.innerHTML = state.versions
-    .map((version) => {
-      const features = version.features.map((item) => `<li>${item}</li>`).join('');
-      return `
-        <article class="version">
-          <h3>Version ${version.version}</h3>
-          <p>${version.summary}</p>
-          <ul>${features}</ul>
-          <a href="${version.preview_url}">Open Live Preview</a>
-        </article>
-      `;
-    })
-    .join('');
+  menuToggle.addEventListener('click', () => {
+    const open = navMenu.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', String(open));
+  });
+
+  navMenu.querySelectorAll('a,button').forEach((item) => {
+    item.addEventListener('click', () => {
+      navMenu.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!navMenu.classList.contains('open')) return;
+    if (navMenu.contains(event.target) || menuToggle.contains(event.target)) return;
+    navMenu.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  });
 }
 
 async function postJSON(path, body) {
@@ -72,122 +79,70 @@ async function postJSON(path, body) {
   return payload;
 }
 
-startForm.addEventListener('submit', async (event) => {
+chatForm.addEventListener('submit', (event) => {
   event.preventDefault();
   clearError();
 
-  const painPoint = painPointInput.value.trim();
-  if (painPoint.length < 10) {
-    showError('Please provide a more specific pain point (at least 10 characters).');
+  const text = chatInput.value.trim();
+  if (!text) return;
+
+  addBubble('user', text);
+  state.responses.push(text);
+  chatInput.value = '';
+
+  if (state.step < prompts.length - 1) {
+    state.step += 1;
+    addBubble('agent', prompts[state.step]);
+  }
+
+  if (state.responses.length >= 2) {
+    doneBtn.disabled = false;
+    statusEl.textContent = 'When ready, click "I\'m done thank you!" to generate your app.';
+  }
+});
+
+doneBtn.addEventListener('click', async () => {
+  clearError();
+
+  if (!state.responses.length) {
+    showError('Please answer at least one prompt first.');
     return;
   }
 
+  doneBtn.disabled = true;
+  statusEl.textContent = 'Generating your app...';
+
   try {
-    const payload = await postJSON('/api/session/start', { pain_point: painPoint });
-    state.sessionId = payload.session_id;
-    state.versions = [];
+    const painPoint = state.responses[0];
+    const start = await postJSON('/api/session/start', { pain_point: painPoint });
+    const sessionId = start.session_id;
 
-    sessionNote.textContent = `Session: ${payload.session_id}`;
-    discoveryPanel.hidden = false;
-    outputPanel.hidden = true;
-    generateBtn.hidden = true;
+    const synthesis = [
+      `Pain point: ${state.responses[0] || 'N/A'}`,
+      `Importance: ${state.responses[1] || 'High'}`,
+      `Additional context: ${state.responses[2] || 'N/A'}`,
+    ].join('\n');
 
-    setQuestion(payload.question, payload.remaining);
-    answerInput.value = '';
-    renderVersions();
+    let cursor = start;
+    while (!cursor.done) {
+      const answerPayload = await postJSON('/api/session/answer', {
+        session_id: sessionId,
+        answer: synthesis,
+      });
+      cursor = answerPayload;
+      if (cursor.done) break;
+    }
+
+    const version = await postJSON('/api/generate', { session_id: sessionId });
+    statusEl.textContent = 'Done. Opening live preview...';
+    window.location.href = version.preview_url;
   } catch (error) {
+    doneBtn.disabled = false;
+    statusEl.textContent = '';
     if (error.message === 'Authentication required') {
       window.location.href = '/#auth';
       return;
     }
-    showError(error.message);
-  }
-});
-
-answerForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  clearError();
-
-  if (!state.sessionId) {
-    showError('Start a session first.');
-    return;
-  }
-
-  const answer = answerInput.value.trim();
-  if (!answer) {
-    showError('Please answer the question before submitting.');
-    return;
-  }
-
-  try {
-    const payload = await postJSON('/api/session/answer', {
-      session_id: state.sessionId,
-      answer,
-    });
-
-    answerInput.value = '';
-
-    if (payload.done) {
-      questionEl.textContent = payload.message;
-      remainingEl.textContent = 'Discovery completed.';
-      generateBtn.hidden = false;
-      return;
-    }
-
-    setQuestion(payload.question, payload.remaining);
-  } catch (error) {
-    showError(error.message);
-  }
-});
-
-generateBtn.addEventListener('click', async () => {
-  clearError();
-
-  try {
-    const version = await postJSON('/api/generate', {
-      session_id: state.sessionId,
-    });
-
-    state.versions.unshift(version);
-    outputPanel.hidden = false;
-    renderVersions();
-    window.location.href = version.preview_url;
-  } catch (error) {
-    showError(error.message);
-  }
-});
-
-feedbackForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  clearError();
-
-  if (!state.sessionId) {
-    showError('Start a session first.');
-    return;
-  }
-
-  if (!state.versions.length) {
-    showError('Generate the first version before using feedback.');
-    return;
-  }
-
-  const feedback = feedbackInput.value.trim();
-  if (feedback.length < 3) {
-    showError('Feedback should be at least 3 characters.');
-    return;
-  }
-
-  try {
-    const version = await postJSON('/api/feedback', {
-      session_id: state.sessionId,
-      feedback,
-    });
-
-    feedbackInput.value = '';
-    state.versions.unshift(version);
-    renderVersions();
-    window.location.href = version.preview_url;
-  } catch (error) {
     showError(error.message);
   }
 });
@@ -201,3 +156,6 @@ logoutBtn.addEventListener('click', async () => {
     showError(error.message);
   }
 });
+
+addBubble('agent', prompts[0]);
+wireMenu();

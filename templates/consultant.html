@@ -7,51 +7,44 @@
   <link rel="stylesheet" href="/static/consultant.css" />
 </head>
 <body>
+  <header class="banner">
+    <a class="banner-title" href="/">SolveChain | Discovery to Action</a>
+    <button
+      class="menu-toggle"
+      id="menu-toggle"
+      aria-expanded="false"
+      aria-controls="nav-menu"
+      aria-label="Toggle menu"
+    >
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-menu" id="nav-menu">
+      <a href="/">Home</a>
+      <a href="/consultant">Consultant</a>
+      <button id="logout-btn" type="button">Logout</button>
+    </nav>
+  </header>
+
   <main class="page">
     <header class="hero">
-      <div class="hero-top">
-        <p class="eyebrow">SolveChain | Discovery to Action</p>
-        <div class="hero-actions">
-          <a class="text-link" href="/">Back to site</a>
-          <button id="logout-btn" type="button">Logout</button>
-        </div>
-      </div>
-      <h1>SolveChain Consultant</h1>
-      <p>Describe the pain point, answer discovery questions, then open a live app preview instantly.</p>
+      <p class="eyebrow">SolveChain Workspace</p>
+      <h1>Automation Discovery Chat</h1>
+      <p>Answer a few quick prompts, then click the button below to generate your app immediately.</p>
     </header>
 
-    <section class="panel">
-      <h2>1. Pain Point</h2>
-      <form id="start-form" class="stack">
-        <label for="pain-point">What problem are we solving?</label>
-        <textarea id="pain-point" name="pain-point" rows="4" placeholder="Example: Our support tickets live in email, so we miss SLAs and duplicate work."></textarea>
-        <button type="submit">Start Discovery</button>
-      </form>
-      <p id="session-note" class="muted"></p>
-    </section>
-
-    <section class="panel" id="discovery-panel" hidden>
-      <h2>2. Follow-up Questions</h2>
-      <p id="question"></p>
-      <form id="answer-form" class="stack">
-        <textarea id="answer" rows="4" placeholder="Your answer"></textarea>
-        <button type="submit">Submit Answer</button>
-      </form>
-      <p id="remaining" class="muted"></p>
-      <button id="generate-btn" type="button" hidden>Generate v1 And Open Live Preview</button>
-    </section>
-
-    <section class="panel" id="output-panel" hidden>
-      <h2>3. Generated Versions</h2>
-      <div id="versions"></div>
-      <form id="feedback-form" class="stack">
-        <label for="feedback">Feedback for next version</label>
-        <textarea id="feedback" rows="3" placeholder="Example: Add approvals, better mobile UX, and CSV exports."></textarea>
-        <button type="submit">Generate Next Version And Open Preview</button>
+    <section class="panel chat-panel">
+      <div id="chat-thread" class="chat-thread" aria-live="polite"></div>
+      <form id="chat-form" class="chat-entry">
+        <textarea id="chat-input" rows="2" placeholder="Type your response..."></textarea>
+        <button type="submit">Send</button>
       </form>
     </section>
 
-    <p id="error" class="error" hidden></p>
+    <section class="panel action-panel">
+      <button id="done-btn" type="button" disabled>I'm done thank you!</button>
+      <p id="status" class="muted"></p>
+      <p id="error" class="error" hidden></p>
+    </section>
   </main>
 
   <script src="/static/consultant.js"></script>

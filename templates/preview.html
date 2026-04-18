@@ -7,16 +7,30 @@
   <link rel="stylesheet" href="/static/preview.css" />
 </head>
 <body>
+  <header class="banner">
+    <a class="banner-title" href="/">SolveChain | Discovery to Action</a>
+    <button
+      class="menu-toggle"
+      id="menu-toggle"
+      aria-expanded="false"
+      aria-controls="nav-menu"
+      aria-label="Toggle menu"
+    >
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-menu" id="nav-menu">
+      <a href="/">Home</a>
+      <a href="/consultant">Consultant</a>
+      <button id="logout-btn" type="button">Logout</button>
+    </nav>
+  </header>
+
   <main class="page">
     <header class="head">
       <div>
         <p class="eyebrow">Live Version</p>
         <h1>Preview v{{ version }}</h1>
         <p>{{ summary }}</p>
-      </div>
-      <div class="head-links">
-        <a href="/consultant">Back to Consultant</a>
-        <a href="/">Home</a>
       </div>
     </header>
 

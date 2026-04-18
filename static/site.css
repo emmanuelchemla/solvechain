@@ -26,34 +26,24 @@ body {
   left: 0;
   right: 0;
   z-index: 50;
-  padding: .66rem 1rem;
-  text-align: center;
-  color: #fff;
-  font-weight: 800;
-  font-size: 1.05rem;
-  background: linear-gradient(90deg, #071427, var(--banner));
-}
-
-.topbar {
-  position: fixed;
-  top: 40px;
-  left: 0;
-  right: 0;
-  z-index: 45;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: .8rem 1rem;
-  background: rgba(244, 248, 255, 0.96);
-  border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(10px);
+  gap: .8rem;
+  min-height: 72px;
+  padding: .85rem 1rem;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.2rem;
+  background: linear-gradient(90deg, #071427, var(--banner));
 }
 
-.brand {
-  color: var(--text);
+.banner-title {
+  color: #fff;
   text-decoration: none;
   font-weight: 900;
-  font-size: 1.22rem;
+  font-size: 1.25rem;
+  line-height: 1.2;
 }
 
 .menu-toggle {
@@ -63,9 +53,9 @@ body {
   gap: 4px;
   width: 40px;
   height: 40px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 10px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.15);
   cursor: pointer;
 }
 
@@ -74,7 +64,7 @@ body {
   width: 18px;
   height: 2px;
   margin: 0 auto;
-  background: var(--text);
+  background: #fff;
   border-radius: 99px;
 }
 
@@ -109,7 +99,7 @@ body {
 main {
   width: min(1200px, 100% - 2rem);
   margin: 0 auto;
-  padding-top: 138px;
+  padding-top: 104px;
   padding-bottom: 2rem;
 }
 
@@ -369,7 +359,7 @@ input {
 }
 
 @media (max-width: 980px) {
-  main { padding-top: 162px; }
+  main { padding-top: 116px; }
 
   .split,
   .plan-grid,
@@ -383,11 +373,6 @@ input {
   .form-col:last-child {
     padding-right: 0;
     padding-left: 0;
-  }
-
-  .topbar {
-    top: 37px;
-    padding: .72rem .8rem;
   }
 
   .plan-card.featured { transform: none; }

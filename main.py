@@ -334,6 +334,7 @@ def _build_generated_fastapi_files(
           <link rel=\"stylesheet\" href=\"./static/styles.css\" />
         </head>
         <body>
+          <header class=\"banner\">SolveChain | Discovery to Action</header>
           <main class=\"shell\">
             <header>
               <h1>{app_title}</h1>
@@ -377,9 +378,25 @@ def _build_generated_fastapi_files(
           background: radial-gradient(circle at 0 0, #d7f3ef, transparent 45%), var(--bg);
         }
 
+        .banner {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 10;
+          min-height: 64px;
+          display: flex;
+          align-items: center;
+          padding: .8rem 1rem;
+          color: #fff;
+          font-weight: 800;
+          font-size: 1.05rem;
+          background: linear-gradient(90deg, #071427, #091f3a);
+        }
+
         .shell {
           max-width: 980px;
-          margin: 2rem auto;
+          margin: 5.2rem auto 2rem;
           background: var(--panel);
           border: 1px solid var(--line);
           border-radius: 16px;

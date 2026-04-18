@@ -4,6 +4,9 @@ const feedbackForm = document.getElementById('feedback-form');
 const feedbackInput = document.getElementById('feedback');
 const statusEl = document.getElementById('status');
 const errorEl = document.getElementById('error');
+const logoutBtn = document.getElementById('logout-btn');
+const menuToggle = document.getElementById('menu-toggle');
+const navMenu = document.getElementById('nav-menu');
 
 function showError(message) {
   errorEl.hidden = false;
@@ -27,6 +30,29 @@ async function postJSON(path, body) {
     throw new Error(payload.detail || 'Request failed');
   }
   return payload;
+}
+
+function wireMenu() {
+  if (!menuToggle || !navMenu) return;
+
+  menuToggle.addEventListener('click', () => {
+    const open = navMenu.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', String(open));
+  });
+
+  navMenu.querySelectorAll('a,button').forEach((item) => {
+    item.addEventListener('click', () => {
+      navMenu.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!navMenu.classList.contains('open')) return;
+    if (navMenu.contains(event.target) || menuToggle.contains(event.target)) return;
+    navMenu.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  });
 }
 
 feedbackForm.addEventListener('submit', async (event) => {
@@ -54,3 +80,15 @@ feedbackForm.addEventListener('submit', async (event) => {
     showError(error.message);
   }
 });
+
+logoutBtn.addEventListener('click', async () => {
+  clearError();
+  try {
+    await postJSON('/api/auth/logout', {});
+    window.location.href = '/#auth';
+  } catch (error) {
+    showError(error.message);
+  }
+});
+
+wireMenu();
