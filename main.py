@@ -184,25 +184,90 @@ def _build_version_ideas(
             ]
         )
 
+    blueprints = [
+        {
+            "team": "Operations + Team Leads",
+            "timeline": "2-3 weeks",
+            "impact": "Cuts cycle time on recurring work by 30-45%.",
+            "confidence": "High confidence",
+            "function": "Consolidates recurring requests in one queue with ownership, due dates, and escalation guards.",
+            "rationale": "Multiple employees reported the same blocker pattern, so centralizing intake unlocks immediate throughput.",
+        },
+        {
+            "team": "Support + Backoffice",
+            "timeline": "3-4 weeks",
+            "impact": "Reduces backlog spillover and missed SLAs.",
+            "confidence": "Medium-high confidence",
+            "function": "Routes incoming work by urgency and topic, then enforces SLA-aware ownership handoffs.",
+            "rationale": "Pain points were repeated in several interviews and tied to customer-facing delays.",
+        },
+        {
+            "team": "Finance Ops + Managers",
+            "timeline": "4-5 weeks",
+            "impact": "Improves approval speed and audit traceability.",
+            "confidence": "Medium confidence",
+            "function": "Adds decision checkpoints, approval states, and clear history for each requested action.",
+            "rationale": "Teams described avoidable approval bottlenecks and unclear accountability for pending decisions.",
+        },
+        {
+            "team": "People Ops + Department Leads",
+            "timeline": "2-4 weeks",
+            "impact": "Shortens onboarding and reduces repetitive follow-up.",
+            "confidence": "High confidence",
+            "function": "Turns onboarding/onboarding-like workflows into guided checklists with owner reminders.",
+            "rationale": "Interview data shows repeated process gaps for new hires and cross-team setup work.",
+        },
+        {
+            "team": "Project Office + Executives",
+            "timeline": "3-5 weeks",
+            "impact": "Gives a single live view of progress, risk, and blockers.",
+            "confidence": "Medium-high confidence",
+            "function": "Builds a control tower dashboard for project health, delays, and risk concentration.",
+            "rationale": "Stakeholders asked for one source of truth instead of fragmented status reporting.",
+        },
+        {
+            "team": "Sales Ops + RevOps",
+            "timeline": "3-4 weeks",
+            "impact": "Improves handoff quality and conversion consistency.",
+            "confidence": "Medium confidence",
+            "function": "Standardizes lead/opportunity transitions and enforces required context at each stage.",
+            "rationale": "Several users reported dropped context between teams leading to rework and delays.",
+        },
+        {
+            "team": "Compliance + Operations",
+            "timeline": "4-6 weeks",
+            "impact": "Lowers compliance risk and manual audit effort.",
+            "confidence": "Medium confidence",
+            "function": "Introduces policy checks and evidence capture directly in the operational workflow.",
+            "rationale": "Teams flagged high-risk manual steps and weak traceability across process exceptions.",
+        },
+        {
+            "team": "Knowledge Team + Practitioners",
+            "timeline": "2-3 weeks",
+            "impact": "Reduces repeated questions and context switching.",
+            "confidence": "High confidence",
+            "function": "Captures recurring operational decisions and links them to reusable playbooks.",
+            "rationale": "Interview synthesis surfaced repeated confusion around process edge-cases and ownership.",
+        },
+    ]
+
     ideas: list[dict[str, str]] = []
     for idx, title in enumerate(base_titles[:8]):
-        importance = 9 - (idx % 4)  # 9..6
-        feasibility = 8 - (idx % 3)  # 8..6
+        blueprint = blueprints[idx % len(blueprints)]
+        importance = max(6, 9 - (idx % 4))  # 9..6
+        feasibility = max(5, 8 - (idx % 4))  # 8..5
         importance_stars = "★" * max(1, round(importance / 2)) + "☆" * (
             5 - max(1, round(importance / 2))
         )
         feasibility_stars = "★" * max(1, round(feasibility / 2)) + "☆" * (
             5 - max(1, round(feasibility / 2))
         )
-        low = 2200 + (idx * 950)
-        high = low + 2600
+        low = 2800 + (idx * 1250)
+        high = low + 3400 + (idx * 180)
         function = (
-            f"This app idea focuses on {title.lower()} and gives teams a clear, daily workflow."
+            f"{blueprint['function']} In this case, the core module centers on {title.lower()}."
         )
-        rationale = (
-            "This is important because repeated friction appears across multiple users, "
-            "and high-frequency pain points create the fastest operational impact."
-        )
+        rationale = blueprint["rationale"]
         ideas.append(
             {
                 "id": str(idx),
@@ -214,6 +279,10 @@ def _build_version_ideas(
                 "price": f"${low:,} - ${high:,}",
                 "function": function,
                 "rationale": rationale,
+                "team": blueprint["team"],
+                "timeline": blueprint["timeline"],
+                "impact": blueprint["impact"],
+                "confidence": blueprint["confidence"],
                 "app_url": f"/preview/{session_id}/{version}/app/?idea={idx}",
             }
         )
@@ -318,7 +387,12 @@ def _consultant_summary(
 
 
 def _build_generated_fastapi_files(
-    app_slug: str, app_title: str, summary: str, features: list[str]
+    app_slug: str,
+    app_title: str,
+    summary: str,
+    features: list[str],
+    mock_variant: str = "ops",
+    mock_subtitle: str = "Interactive mockup generated from interview synthesis.",
 ) -> dict[str, str]:
     feature_bullets = "\n".join(f"- {item}" for item in features)
     cards_json = ",\n".join(
@@ -383,22 +457,42 @@ def _build_generated_fastapi_files(
           <title>{app_title}</title>
           <link rel=\"stylesheet\" href=\"./static/styles.css\" />
         </head>
-        <body>
-          <header class=\"banner\">SolveChain | Discovery to Action</header>
+        <body class=\"mock-{mock_variant}\">
+          <header class=\"banner\">SolveChain Prototype</header>
           <main class=\"shell\">
-            <header>
-              <h1>{app_title}</h1>
-              <p>{summary}</p>
-            </header>
-            <section>
-              <h2>Feature Stack</h2>
-              <ul>
-                {''.join(f'<li>{feature}</li>' for feature in features)}
-              </ul>
+            <section class=\"top\">
+              <div>
+                <h1 id=\"app-title\">{app_title}</h1>
+                <p class=\"sub\">{mock_subtitle}</p>
+              </div>
+              <div class=\"kpi-grid\">
+                <article class=\"kpi\"><span>Open items</span><strong id=\"kpi-open\">0</strong></article>
+                <article class=\"kpi\"><span>At risk</span><strong id=\"kpi-risk\">0</strong></article>
+                <article class=\"kpi\"><span>Healthy</span><strong id=\"kpi-healthy\">0</strong></article>
+              </div>
             </section>
-            <section>
-              <h2>Live Queue</h2>
-              <div id=\"cards\" class=\"cards\"></div>
+
+            <section class=\"workspace\">
+              <article class=\"panel\">
+                <h2>New Request</h2>
+                <form id=\"entry-form\" class=\"stack\">
+                  <input id=\"entry-title\" placeholder=\"What needs to be solved?\" required />
+                  <div class=\"row\">
+                    <input id=\"entry-owner\" placeholder=\"Owner\" required />
+                    <select id=\"entry-priority\">
+                      <option>P1</option>
+                      <option selected>P2</option>
+                      <option>P3</option>
+                    </select>
+                  </div>
+                  <button type=\"submit\">Add to queue</button>
+                </form>
+              </article>
+
+              <article class=\"panel\">
+                <h2>Live Queue</h2>
+                <div id=\"cards\" class=\"cards\"></div>
+              </article>
             </section>
           </main>
           <script src=\"./static/app.js\"></script>
@@ -428,6 +522,26 @@ def _build_generated_fastapi_files(
           background: radial-gradient(circle at 0 0, #d7f3ef, transparent 45%), var(--bg);
         }
 
+        body.mock-support {
+          --brand: #1d4ed8;
+          background: radial-gradient(circle at 0 0, #dbeafe, transparent 45%), var(--bg);
+        }
+
+        body.mock-approval {
+          --brand: #b45309;
+          background: radial-gradient(circle at 0 0, #ffedd5, transparent 45%), var(--bg);
+        }
+
+        body.mock-onboarding {
+          --brand: #0f766e;
+          background: radial-gradient(circle at 0 0, #ccfbf1, transparent 45%), var(--bg);
+        }
+
+        body.mock-insights {
+          --brand: #0f4c81;
+          background: radial-gradient(circle at 0 0, #e0ecff, transparent 45%), var(--bg);
+        }
+
         .banner {
           position: fixed;
           top: 0;
@@ -441,11 +555,11 @@ def _build_generated_fastapi_files(
           color: #fff;
           font-weight: 800;
           font-size: 1.05rem;
-          background: linear-gradient(90deg, #071427, #091f3a);
+          background: linear-gradient(90deg, #071427, var(--brand));
         }
 
         .shell {
-          max-width: 980px;
+          max-width: 1120px;
           margin: 5.2rem auto 2rem;
           background: var(--panel);
           border: 1px solid var(--line);
@@ -456,10 +570,90 @@ def _build_generated_fastapi_files(
 
         h1, h2 { margin: 0 0 .75rem; }
         p { margin: 0 0 1rem; line-height: 1.4; }
+        .sub { color: #4b5563; margin: 0; }
+
+        .top {
+          display: grid;
+          grid-template-columns: 1.2fr 1fr;
+          gap: .85rem;
+          align-items: start;
+          margin-bottom: 1rem;
+        }
+
+        .kpi-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: .6rem;
+        }
+
+        .kpi {
+          border: 1px solid var(--line);
+          border-radius: 12px;
+          background: #fff;
+          padding: .55rem .65rem;
+        }
+
+        .kpi span {
+          display: block;
+          font-size: .78rem;
+          color: #64748b;
+        }
+
+        .kpi strong {
+          font-size: 1.2rem;
+          color: var(--brand);
+        }
+
+        .workspace {
+          display: grid;
+          grid-template-columns: 340px 1fr;
+          gap: .8rem;
+        }
+
+        .panel {
+          border: 1px solid var(--line);
+          border-radius: 12px;
+          background: #fff;
+          padding: .75rem;
+          box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .stack {
+          display: grid;
+          gap: .55rem;
+        }
+
+        .row {
+          display: grid;
+          grid-template-columns: 1fr 98px;
+          gap: .5rem;
+        }
+
+        input, select, button {
+          font: inherit;
+        }
+
+        input, select {
+          width: 100%;
+          border: 1px solid var(--line);
+          border-radius: 8px;
+          padding: .58rem .62rem;
+          background: #fff;
+        }
+
+        button {
+          border: 0;
+          border-radius: 9px;
+          padding: .6rem .8rem;
+          color: white;
+          cursor: pointer;
+          font-weight: 700;
+          background: linear-gradient(130deg, var(--brand), #0f766e);
+        }
 
         .cards {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
           gap: .75rem;
         }
 
@@ -470,9 +664,50 @@ def _build_generated_fastapi_files(
           background: #fff;
         }
 
+        .status {
+          display: inline-flex;
+          align-items: center;
+          border-radius: 999px;
+          padding: .15rem .5rem;
+          font-size: .75rem;
+          font-weight: 700;
+          margin-bottom: .45rem;
+        }
+
+        .status.healthy,
+        .status.ready {
+          background: #dcfce7;
+          color: #166534;
+        }
+
+        .status.in-progress,
+        .status.monitoring {
+          background: #dbeafe;
+          color: #1e40af;
+        }
+
+        .status.at-risk {
+          background: #fee2e2;
+          color: #991b1b;
+        }
+
+        .meta-grid {
+          margin-top: .4rem;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: .3rem .5rem;
+        }
+
         .muted {
           color: #4b5563;
           font-size: .9rem;
+        }
+
+        @media (max-width: 980px) {
+          .top,
+          .workspace {
+            grid-template-columns: 1fr;
+          }
         }
         """
         ).strip()
@@ -482,18 +717,69 @@ def _build_generated_fastapi_files(
     js = (
         textwrap.dedent(
             """
-        async function run() {
-          const res = await fetch('./api/cards' + window.location.search);
-          const cards = await res.json();
+        function updateKpis(cards) {
+          const open = cards.length;
+          const risk = cards.filter(card => String(card.status || '').toLowerCase() === 'at risk').length;
+          const healthy = cards.filter(card => ['healthy', 'ready', 'in progress'].includes(String(card.status || '').toLowerCase())).length;
+
+          document.getElementById('kpi-open').textContent = String(open);
+          document.getElementById('kpi-risk').textContent = String(risk);
+          document.getElementById('kpi-healthy').textContent = String(healthy);
+        }
+
+        function renderCards(cards) {
           const host = document.getElementById('cards');
+
+          const statusClass = (status) =>
+            String(status || '')
+              .toLowerCase()
+              .replace(/\\s+/g, '-');
 
           host.innerHTML = cards.map(card => `
             <article class="card">
+              <span class="status ${statusClass(card.status)}">${card.status || 'Active'}</span>
               <strong>${card.title}</strong>
-              <p class="muted">Status: ${card.status}</p>
-              <p class="muted">Owner: ${card.owner}</p>
+              <div class="meta-grid">
+                <p class="muted">Owner: ${card.owner || 'Team'}</p>
+                <p class="muted">Priority: ${card.priority || 'P2'}</p>
+                <p class="muted">SLA: ${card.sla || 'n/a'}</p>
+                <p class="muted">ID: ${card.id}</p>
+              </div>
             </article>
           `).join('');
+
+          updateKpis(cards);
+        }
+
+        async function run() {
+          const res = await fetch('./api/cards' + window.location.search);
+          const cards = await res.json();
+          renderCards(cards);
+
+          const form = document.getElementById('entry-form');
+          const titleInput = document.getElementById('entry-title');
+          const ownerInput = document.getElementById('entry-owner');
+          const priorityInput = document.getElementById('entry-priority');
+
+          form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const title = titleInput.value.trim();
+            const owner = ownerInput.value.trim();
+            const priority = priorityInput.value.trim();
+            if (!title || !owner) return;
+
+            const item = {
+              id: `local-${Date.now()}`,
+              title,
+              status: 'In progress',
+              owner,
+              priority,
+              sla: priority === 'P1' ? '4h' : priority === 'P2' ? '24h' : 'Weekly',
+            };
+            cards.unshift(item);
+            renderCards(cards);
+            form.reset();
+          });
         }
 
         run().catch(err => {
@@ -551,7 +837,7 @@ def _next_version(state: SessionState, feedback: str | None = None) -> Generated
         features = features[:8]
 
     app_slug = _slugify(f"{focus}-{state.session_id[:8]}-v{version}")
-    app_title = _title_case_slug(app_slug)
+    app_title = f"{focus.title()} Workspace v{version}"
     summary = _consultant_summary(state, focus, features, version)
     files = _build_generated_fastapi_files(app_slug, app_title, summary, features)
 
@@ -573,6 +859,43 @@ def _pack_version_as_zip(version_obj: GeneratedVersion) -> bytes:
             zf.writestr(path, content)
     buffer.seek(0)
     return buffer.getvalue()
+
+
+def _mock_variant_for_title(title: str) -> tuple[str, str]:
+    lowered = title.lower()
+    if any(token in lowered for token in ["support", "ticket", "triage"]):
+        return "support", "Support-focused workspace with SLA-aware triage and routing."
+    if any(token in lowered for token in ["approval", "compliance", "escalation"]):
+        return (
+            "approval",
+            "Decision workflow view with escalation and approval accountability.",
+        )
+    if any(token in lowered for token in ["onboarding", "onboard", "setup"]):
+        return (
+            "onboarding",
+            "Guided onboarding workflow with ownership and completion tracking.",
+        )
+    return "insights", "Operational workspace with live queue and performance indicators."
+
+
+def _runtime_preview_files(
+    state: SessionState,
+    version_obj: GeneratedVersion,
+    app_title_override: str | None = None,
+    mock_variant: str = "ops",
+    mock_subtitle: str = "Interactive mockup generated from interview synthesis.",
+) -> dict[str, str]:
+    focus = _extract_focus(state.pain_point, state.answers)
+    app_slug = _slugify(f"{focus}-{state.session_id[:8]}-v{version_obj.version}")
+    app_title = app_title_override or f"{focus.title()} Workspace v{version_obj.version}"
+    return _build_generated_fastapi_files(
+        app_slug,
+        app_title,
+        version_obj.summary,
+        version_obj.feature_list,
+        mock_variant=mock_variant,
+        mock_subtitle=mock_subtitle,
+    )
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -624,7 +947,28 @@ async def preview_app_index(
     user = _require_user(request)
     state = _owned_session(session_id, user["email"])
     match = _owned_version(state, version)
-    html = match.files.get("templates/index.html")
+
+    idea_idx_raw = request.query_params.get("idea", "0")
+    try:
+        idea_idx = max(0, int(idea_idx_raw))
+    except ValueError:
+        idea_idx = 0
+
+    ideas = _build_version_ideas(session_id, version, match)
+    selected = ideas[min(idea_idx, len(ideas) - 1)] if ideas else None
+    selected_title = selected["title"] if selected else f"Workspace v{version}"
+    mock_variant, mock_subtitle = _mock_variant_for_title(selected_title)
+
+    runtime_files = _runtime_preview_files(
+        state,
+        match,
+        app_title_override=selected_title,
+        mock_variant=mock_variant,
+        mock_subtitle=mock_subtitle,
+    )
+    html = runtime_files.get("templates/index.html")
+    if not html:
+        html = match.files.get("templates/index.html")
     if not html:
         raise HTTPException(status_code=404, detail="Generated app index missing")
     return HTMLResponse(content=html)
@@ -638,7 +982,10 @@ async def preview_app_static(
     state = _owned_session(session_id, user["email"])
     match = _owned_version(state, version)
     key = f"static/{asset_path}"
-    content = match.files.get(key)
+    runtime_files = _runtime_preview_files(state, match)
+    content = runtime_files.get(key)
+    if content is None:
+        content = match.files.get(key)
     if content is None:
         raise HTTPException(status_code=404, detail="Generated static asset not found")
 
@@ -667,21 +1014,151 @@ async def preview_app_cards(
         idea_idx = 0
 
     ideas = _build_version_ideas(session_id, version, match)
-    selected_title = ideas[min(idea_idx, len(ideas) - 1)]["title"] if ideas else "Core workflow"
+    selected = ideas[min(idea_idx, len(ideas) - 1)] if ideas else None
+    selected_title = selected["title"] if selected else "Core workflow"
+    selected_team = selected["team"] if selected else "Operations"
+    idea_text = selected_title.lower()
 
-    cards: list[dict[str, str]] = []
-    for idx, feature in enumerate(match.feature_list[:4]):
-        title = feature
-        if idx == 0:
-            title = selected_title
-        cards.append(
+    if any(token in idea_text for token in ["approval", "escalation", "compliance"]):
+        cards = [
             {
-                "id": f"card-{idx + 1}",
-                "title": title,
-                "status": "Active",
-                "owner": "Ops",
-            }
-        )
+                "id": "card-1",
+                "title": "Pending approvals older than 48h",
+                "status": "At risk",
+                "owner": "Finance Lead",
+                "priority": "P1",
+                "sla": "8h",
+            },
+            {
+                "id": "card-2",
+                "title": "Escalation queue for blocked requests",
+                "status": "In progress",
+                "owner": "Ops Manager",
+                "priority": "P1",
+                "sla": "4h",
+            },
+            {
+                "id": "card-3",
+                "title": "Audit trail completeness",
+                "status": "Healthy",
+                "owner": "Compliance",
+                "priority": "P2",
+                "sla": "24h",
+            },
+            {
+                "id": "card-4",
+                "title": "Decision latency by approver",
+                "status": "Monitoring",
+                "owner": "Analytics",
+                "priority": "P3",
+                "sla": "Daily",
+            },
+        ]
+    elif any(token in idea_text for token in ["support", "ticket", "triage"]):
+        cards = [
+            {
+                "id": "card-1",
+                "title": "Urgent ticket triage lane",
+                "status": "In progress",
+                "owner": "Support Manager",
+                "priority": "P1",
+                "sla": "2h",
+            },
+            {
+                "id": "card-2",
+                "title": "Reassignment due to missing context",
+                "status": "At risk",
+                "owner": "Backoffice",
+                "priority": "P2",
+                "sla": "6h",
+            },
+            {
+                "id": "card-3",
+                "title": "First-response compliance",
+                "status": "Healthy",
+                "owner": "QA",
+                "priority": "P2",
+                "sla": "95% target",
+            },
+            {
+                "id": "card-4",
+                "title": "Automation candidate cluster",
+                "status": "Ready",
+                "owner": "Product Ops",
+                "priority": "P3",
+                "sla": "Weekly",
+            },
+        ]
+    elif any(token in idea_text for token in ["onboarding", "onboard"]):
+        cards = [
+            {
+                "id": "card-1",
+                "title": "New-hire setup checklist",
+                "status": "In progress",
+                "owner": "People Ops",
+                "priority": "P1",
+                "sla": "Day 1",
+            },
+            {
+                "id": "card-2",
+                "title": "Access provisioning blockers",
+                "status": "At risk",
+                "owner": "IT Ops",
+                "priority": "P1",
+                "sla": "4h",
+            },
+            {
+                "id": "card-3",
+                "title": "Manager intro completion",
+                "status": "Healthy",
+                "owner": "Department Leads",
+                "priority": "P2",
+                "sla": "Week 1",
+            },
+            {
+                "id": "card-4",
+                "title": "Training milestone completion",
+                "status": "Monitoring",
+                "owner": "Enablement",
+                "priority": "P3",
+                "sla": "Week 2",
+            },
+        ]
+    else:
+        cards = [
+            {
+                "id": "card-1",
+                "title": selected_title,
+                "status": "In progress",
+                "owner": selected_team,
+                "priority": "P1",
+                "sla": "Same day",
+            },
+            {
+                "id": "card-2",
+                "title": "High-friction workflow cluster",
+                "status": "At risk",
+                "owner": "Ops Excellence",
+                "priority": "P1",
+                "sla": "24h",
+            },
+            {
+                "id": "card-3",
+                "title": "Cross-team handoff quality",
+                "status": "Monitoring",
+                "owner": "Program Manager",
+                "priority": "P2",
+                "sla": "Weekly",
+            },
+            {
+                "id": "card-4",
+                "title": "Automation rollout candidates",
+                "status": "Ready",
+                "owner": "Platform Team",
+                "priority": "P2",
+                "sla": "Next sprint",
+            },
+        ]
     return cards
 
 

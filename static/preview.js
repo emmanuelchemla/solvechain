@@ -10,8 +10,13 @@ const generationFill = document.getElementById('generation-fill');
 
 const previewEmpty = document.getElementById('preview-empty');
 const selectedTitle = document.getElementById('selected-title');
+const selectedContext = document.getElementById('selected-context');
 const selectedFunction = document.getElementById('selected-function');
 const selectedRationale = document.getElementById('selected-rationale');
+const selectedTeam = document.getElementById('selected-team');
+const selectedTimeline = document.getElementById('selected-timeline');
+const selectedImpact = document.getElementById('selected-impact');
+const selectedConfidence = document.getElementById('selected-confidence');
 const appFrame = document.getElementById('app-frame');
 
 function setGenerationStatus(text) {
@@ -101,8 +106,7 @@ function wireMenu() {
 function clearPreview() {
   previewEmpty.hidden = false;
   selectedTitle.hidden = true;
-  selectedFunction.hidden = true;
-  selectedRationale.hidden = true;
+  if (selectedContext) selectedContext.hidden = true;
   appFrame.hidden = true;
   appFrame.src = 'about:blank';
 }
@@ -113,13 +117,16 @@ function setActiveIdea(card) {
 
   previewEmpty.hidden = true;
   selectedTitle.hidden = false;
-  selectedFunction.hidden = false;
-  selectedRationale.hidden = false;
+  if (selectedContext) selectedContext.hidden = false;
   appFrame.hidden = false;
 
   selectedTitle.textContent = card.dataset.title;
-  selectedFunction.innerHTML = `<strong>Function:</strong> ${card.dataset.function || ''}`;
-  selectedRationale.innerHTML = `<strong>Rationale:</strong> ${card.dataset.rationale || ''}`;
+  if (selectedFunction) selectedFunction.textContent = card.dataset.function || '';
+  if (selectedRationale) selectedRationale.textContent = card.dataset.rationale || '';
+  if (selectedTeam) selectedTeam.textContent = card.dataset.team || '';
+  if (selectedTimeline) selectedTimeline.textContent = card.dataset.timeline || '';
+  if (selectedImpact) selectedImpact.textContent = card.dataset.impact || '';
+  if (selectedConfidence) selectedConfidence.textContent = card.dataset.confidence || '';
   appFrame.src = card.dataset.appUrl;
 }
 

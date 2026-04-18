@@ -307,10 +307,38 @@ body {
   display: block;
 }
 
-.context-line {
-  margin: .25rem 0 .45rem;
-  color: #334155;
-  line-height: 1.35;
+.context-chips {
+  margin: .35rem 0 .65rem;
+  display: flex;
+  gap: .45rem;
+  overflow-x: auto;
+  padding-bottom: .2rem;
+}
+
+.context-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  border: 1px solid #d2dff1;
+  border-radius: 999px;
+  background: #f8fbff;
+  padding: .25rem .55rem;
+  font-size: .79rem;
+  max-width: 340px;
+}
+
+.context-chip .label {
+  color: #4b5563;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.context-chip span:last-child {
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .preview-empty {
