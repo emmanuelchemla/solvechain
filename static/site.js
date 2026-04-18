@@ -4,6 +4,8 @@ const logoutBtn = document.getElementById('logout-btn');
 const authError = document.getElementById('auth-error');
 const authState = document.getElementById('auth-state');
 const consultantLink = document.getElementById('consultant-link');
+const menuToggle = document.getElementById('menu-toggle');
+const navMenu = document.getElementById('nav-menu');
 
 function showError(message) {
   authError.hidden = false;
@@ -69,6 +71,29 @@ function wireScrollReveal() {
   elements.forEach((element) => observer.observe(element));
 }
 
+function wireMenu() {
+  if (!menuToggle || !navMenu) return;
+
+  menuToggle.addEventListener('click', () => {
+    const open = navMenu.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', String(open));
+  });
+
+  navMenu.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      navMenu.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!navMenu.classList.contains('open')) return;
+    if (navMenu.contains(event.target) || menuToggle.contains(event.target)) return;
+    navMenu.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  });
+}
+
 registerForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   clearError();
@@ -116,5 +141,6 @@ logoutBtn.addEventListener('click', async () => {
   }
 });
 
+wireMenu();
 wireScrollReveal();
 loadAuth().catch((error) => showError(error.message));

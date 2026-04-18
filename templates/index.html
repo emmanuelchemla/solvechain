@@ -1,134 +1,244 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SolveChain | Discovery to Action</title>
-  <link rel="stylesheet" href="/static/site.css" />
-</head>
-<body>
-  <div class="banner">SolveChain | Discovery to Action</div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SolveChain | Discovery to Action</title>
+    <link rel="stylesheet" href="/static/site.css" />
+  </head>
+  <body>
+    <div class="banner">SolveChain | Discovery to Action</div>
 
-  <header class="topbar">
-    <a class="brand" href="#home">SolveChain</a>
-    <nav>
-      <a href="#pitch">Pitch</a>
-      <a href="#proof">Proof</a>
-      <a href="#process">Process</a>
-      <a href="#packages">Packages</a>
-      <a href="#about">Who We Are</a>
-      <a href="#auth">Try</a>
-    </nav>
-  </header>
+    <header class="topbar">
+      <a class="brand" href="#home">SolveChain</a>
+      <button
+        class="menu-toggle"
+        id="menu-toggle"
+        aria-expanded="false"
+        aria-controls="nav-menu"
+        aria-label="Toggle menu"
+      >
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-menu" id="nav-menu">
+        <a href="#outcome">Outcome</a>
+        <a href="#proof">Proof</a>
+        <a href="#flow">How It Works</a>
+        <a href="#plans">Plans</a>
+        <a href="#team">Team</a>
+        <a href="#auth">Try</a>
+      </nav>
+    </header>
 
-  <main id="home">
-    <section id="pitch" class="band band-hero reveal">
-      <div class="split">
-        <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1400&q=80" alt="Team building product dashboards" />
-        <div class="copy">
-          <p class="chip">Discovery to Action</p>
-          <h1>Your employees tell us their pain points. We build the most impactful solution.</h1>
-          <p>No long discovery decks. No vague roadmap. Just a clear problem, a working FastAPI app, and rapid iteration.</p>
-          <div class="cta-row">
-            <a class="btn" href="#auth">Start Now</a>
-            <a class="btn btn-ghost" href="#process">See How</a>
+    <main id="home">
+      <section id="outcome" class="band band-hero reveal">
+        <div class="split">
+          <img
+            src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1400&q=80"
+            alt="Team building product dashboards"
+          />
+          <div class="copy">
+            <p class="chip">Discovery to Action</p>
+            <h1>
+              Your employees tell us pain points. We turn them into working
+              software.
+            </h1>
+            <p class="lead">
+              You get a clear problem map, prioritized opportunities, and a
+              FastAPI app that improves every iteration.
+            </p>
+            <div class="cta-row">
+              <a class="btn" href="#auth">Start Now</a>
+              <a class="btn btn-ghost" href="#flow">See Workflow</a>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="proof" class="band band-alt reveal">
-      <div class="split">
-        <div class="copy">
-          <h2>From friction to flow</h2>
-          <p>Messy workflow in email and spreadsheets? We turn it into one clean app.</p>
-          <p>You get speed, visibility, and ownership in days, not months.</p>
+      <section id="proof" class="band band-alt reveal">
+        <div class="split">
+          <div class="copy">
+            <h2>From friction to flow</h2>
+            <p>Some employees hit a huge blocker.</p>
+            <p>Employees all hit the same pain point without even knowing.</p>
+            <p>
+              Automation is there, but what are the priorities, and how do we
+              act?
+            </p>
+          </div>
+          <img
+            src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80"
+            alt="Operations team reviewing workflow"
+          />
         </div>
-        <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80" alt="Operations team reviewing workflow" />
-      </div>
-    </section>
+      </section>
 
-    <section id="testimonials" class="band reveal">
-      <div class="split">
-        <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80" alt="Team collaboration session" />
-        <div class="copy">
-          <h2>What teams say</h2>
-          <p>"We replaced three tools with one app in a week."</p>
-          <p>"They found our key pain points one by one, and solved them in order."</p>
-          <p>"The questions were sharp. The first version was usable."</p>
-          <p>"Finally a workflow app people actually use."</p>
+      <section id="voices" class="band reveal testimonials-band">
+        <div class="ticker">
+          <div class="ticker-track">
+            <article class="voice">
+              "We replaced three tools with one app in a week."
+            </article>
+            <article class="voice">
+              "They found our key pain points one by one, and solved them in
+              order."
+            </article>
+            <article class="voice">
+              "The questions were sharp. The first version was usable."
+            </article>
+            <article class="voice">
+              "Finally a workflow app people actually use."
+            </article>
+            <article class="voice">
+              "We stopped debating and started shipping."
+            </article>
+            <article class="voice">
+              "We replaced three tools with one app in a week."
+            </article>
+            <article class="voice">
+              "They found our key pain points one by one, and solved them in
+              order."
+            </article>
+            <article class="voice">
+              "The questions were sharp. The first version was usable."
+            </article>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="process" class="band band-alt reveal">
-      <div class="split">
-        <div class="copy">
-          <h2>Process</h2>
-          <ol>
-            <li>Multiple employees share their pain points.</li>
-            <li>We synthesize recurring pain into clear priorities.</li>
-            <li>Answer focused follow-up questions.</li>
-            <li>Get a working FastAPI app.</li>
-            <li>Give feedback, get a better version.</li>
-          </ol>
+      <section id="flow" class="band band-alt reveal">
+        <div class="split">
+          <div class="copy">
+            <h2>Learn</h2>
+            <div class="flow-steps">
+              <article class="flow-step">
+                <p>
+                  We collect information in parallel, using your favorite
+                  channels, without time wasted and previous interviews
+                  informing the next.
+                </p>
+              </article>
+            </div>
+            <h2>Solve</h2>
+            <div class="flow-steps">
+              <article class="flow-step">
+                <p>We deliver in-depth analyses and ready-to-use solutions.</p>
+              </article>
+            </div>
+          </div>
+          <img
+            src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80"
+            alt="Developer workflow and planning"
+          />
         </div>
-        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80" alt="Developer workflow and planning" />
-      </div>
-    </section>
+      </section>
 
-    <section id="packages" class="band reveal">
-      <div class="split">
-        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80" alt="Business planning and growth" />
-        <div class="copy">
-          <h2>Packages</h2>
-          <p><strong>Starter:</strong> $99/month - 1 workspace, core generation, version history.</p>
-          <p><strong>Growth:</strong> $299/month - 5 workspaces, priority queue, team notes.</p>
-          <p><strong>Scale:</strong> Custom - unlimited workspaces, integrations, dedicated support.</p>
+      <section id="plans" class="band reveal plans-band">
+        <div class="plan-grid">
+          <article class="plan-card">
+            <p class="plan-tier">Starter</p>
+            <p class="plan-price">$99<span>/mo</span></p>
+            <p>One workspace and full discovery-to-build workflow.</p>
+          </article>
+          <article class="plan-card featured">
+            <p class="plan-tier">Growth</p>
+            <p class="plan-price">$299<span>/mo</span></p>
+            <p>Five workspaces, priority queue, and collaboration notes.</p>
+          </article>
+          <article class="plan-card">
+            <p class="plan-tier">Scale</p>
+            <p class="plan-price">Custom</p>
+            <p>Unlimited workspaces, integrations, and dedicated support.</p>
+          </article>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="about" class="band band-alt reveal">
-      <div class="split">
-        <div class="copy">
-          <h2>Who We Are</h2>
-          <p>You have a pain point, we automate it, at scale.</p>
-          <p>Your employees tell us about their pain point, we build the most impactful solution.</p>
+      <section id="team" class="band band-alt reveal">
+        <div class="split">
+          <div class="copy">
+            <h2>Who We Are</h2>
+            <p>You have a pain point, we automate it, at scale.</p>
+            <p>
+              Your employees tell us the pain, we build the highest-impact
+              solution.
+            </p>
+          </div>
+          <img
+            src="https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1200&q=80"
+            alt="Product team working together"
+          />
         </div>
-        <img src="https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1200&q=80" alt="Product team working together" />
-      </div>
-    </section>
+      </section>
 
-    <section id="auth" class="band reveal">
-      <div class="auth-wrap">
-        <h2>Try SolveChain</h2>
-        <p id="auth-state" class="muted"></p>
-        <p class="demo-cred"><strong>Demo login:</strong> demo@solvechain.app / demo12345</p>
-        <div class="auth-grid">
-          <form id="register-form" class="stack form-col">
-            <h3>Create account</h3>
-            <input id="register-name" type="text" placeholder="Name" required />
-            <input id="register-email" type="email" placeholder="Email" required />
-            <input id="register-password" type="password" placeholder="Password (min 8 chars)" required minlength="8" />
-            <button type="submit" class="btn">Register & Access Consultant</button>
-          </form>
+      <section id="auth" class="band reveal">
+        <div class="auth-wrap">
+          <h2>Try SolveChain</h2>
+          <p id="auth-state" class="muted"></p>
+          <p class="demo-cred">
+            <strong>Demo login:</strong> demo@solvechain.app / demo12345
+          </p>
+          <div class="auth-grid">
+            <form id="register-form" class="stack form-col">
+              <h3>Create account</h3>
+              <input
+                id="register-name"
+                type="text"
+                placeholder="Name"
+                required
+              />
+              <input
+                id="register-email"
+                type="email"
+                placeholder="Email"
+                required
+              />
+              <input
+                id="register-password"
+                type="password"
+                placeholder="Password (min 8 chars)"
+                required
+                minlength="8"
+              />
+              <button type="submit" class="btn">
+                Register & Access Consultant
+              </button>
+            </form>
 
-          <form id="login-form" class="stack form-col">
-            <h3>Already registered?</h3>
-            <input id="login-email" type="email" placeholder="Email" required />
-            <input id="login-password" type="password" placeholder="Password" required minlength="8" />
-            <button type="submit" class="btn">Login</button>
-            <button id="logout-btn" type="button" class="btn btn-ghost" hidden>Logout</button>
-          </form>
+            <form id="login-form" class="stack form-col">
+              <h3>Already registered?</h3>
+              <input
+                id="login-email"
+                type="email"
+                placeholder="Email"
+                required
+              />
+              <input
+                id="login-password"
+                type="password"
+                placeholder="Password"
+                required
+                minlength="8"
+              />
+              <button type="submit" class="btn">Login</button>
+              <button
+                id="logout-btn"
+                type="button"
+                class="btn btn-ghost"
+                hidden
+              >
+                Logout
+              </button>
+            </form>
+          </div>
+
+          <p id="auth-error" class="error" hidden></p>
+          <a id="consultant-link" class="btn" href="/consultant" hidden
+            >Go To Consultant App</a
+          >
         </div>
+      </section>
+    </main>
 
-        <p id="auth-error" class="error" hidden></p>
-        <a id="consultant-link" class="btn" href="/consultant" hidden>Go To Consultant App</a>
-      </div>
-    </section>
-  </main>
-
-  <script src="/static/site.js"></script>
-</body>
+    <script src="/static/site.js"></script>
+  </body>
 </html>
