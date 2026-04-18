@@ -18,6 +18,29 @@ function clearError() {
   errorEl.textContent = '';
 }
 
+function normalizeErrorDetail(detail) {
+  if (!detail) return 'Request failed';
+  if (typeof detail === 'string') return detail;
+  if (Array.isArray(detail)) {
+    return detail
+      .map((item) => {
+        if (typeof item === 'string') return item;
+        if (item && typeof item === 'object') {
+          const loc = Array.isArray(item.loc) ? item.loc.join('.') : '';
+          const msg = item.msg || JSON.stringify(item);
+          return loc ? `${loc}: ${msg}` : msg;
+        }
+        return String(item);
+      })
+      .join('; ');
+  }
+  if (typeof detail === 'object') {
+    if (detail.msg) return detail.msg;
+    return JSON.stringify(detail);
+  }
+  return String(detail);
+}
+
 async function postJSON(path, body) {
   const response = await fetch(path, {
     method: 'POST',
@@ -27,7 +50,7 @@ async function postJSON(path, body) {
 
   const payload = await response.json();
   if (!response.ok) {
-    throw new Error(payload.detail || 'Request failed');
+    throw new Error(normalizeErrorDetail(payload.detail));
   }
   return payload;
 }
